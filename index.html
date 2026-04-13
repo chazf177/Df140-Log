@@ -101,7 +101,11 @@
     padding: 16px 24px 0;
     border-bottom: 1px solid var(--border);
     background: var(--panel);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .nav::-webkit-scrollbar { display: none; }
   .nav-tab {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
@@ -441,12 +445,67 @@
     color: var(--text-bright);
   }
 
+  .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
   @media (max-width: 640px) {
     .form-grid { grid-template-columns: 1fr; }
     .log-entry { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
     .header-logo { font-size: 20px; }
-    .nav-tab { padding: 8px 12px; font-size: 10px; }
+    .nav-tab { padding: 8px 10px; font-size: 9px; letter-spacing: 0.5px; }
+    .main { padding: 12px; }
+    .card { padding: 14px; }
+
+    .specs-grid { grid-template-columns: 1fr !important; }
+
+    /* Specs two-col grid → single col on mobile */
+    #section-specs > div[style*="grid-template-columns:1fr 1fr"],
+    #section-specs > div {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+    }
+
+    /* Tide stats grid → 2x2 on mobile */
+    #section-tides .stats-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* Make all tables scroll horizontally */
+    .schedule-table, #tideTable table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Tide 7-day table — allow wrap on mobile */
+    #tideTable .schedule-table td,
+    #tideTable .schedule-table th {
+      white-space: normal;
+      font-size: 11px;
+      padding: 7px 8px;
+    }
+
+    /* Section header wrap on small screens */
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    /* Header: hide divider, shrink hours */
+    .header-divider { display: none; }
+    .hours-display { font-size: 22px; }
+    .header { padding: 0 12px; gap: 10px; }
+    .header-sub { display: none; }
+
+    /* Stat value smaller on mobile */
+    .stat-value { font-size: 28px; }
+    .stat-card { padding: 12px; }
+
+    /* Canvas tide chart full width */
+    #tideChart { width: 100% !important; }
   }
 </style>
 </head>
@@ -473,6 +532,7 @@
   <button class="nav-tab" onclick="switchTab('history')">History</button>
   <button class="nav-tab" onclick="switchTab('schedule')">Schedule</button>
   <button class="nav-tab" onclick="switchTab('specs')">Specs</button>
+  <button class="nav-tab" onclick="switchTab('tides')">Tides</button>
 </div>
 
 <div class="main">
@@ -640,7 +700,7 @@
       <div class="section-title">Engine Specifications</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="specs-grid">
 
       <div class="card">
         <div class="card-title">⚙ Core Engine</div>
@@ -708,7 +768,7 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Model / Variant</label>
-            <input type="text" id="specModel" placeholder="e.g. DF140B" oninput="saveSpecs()">
+            <input type="text" id="specModel" placeholder="e.g. DF140BTLW" oninput="saveSpecs()">
           </div>
           <div class="form-group">
             <label>Serial Number</label>
@@ -755,6 +815,55 @@
     </div>
   </div>
 
+  <!-- TIDES -->
+  <div class="section" id="section-tides">
+    <div class="section-header">
+      <div class="section-title">Tides — Bristol, PA</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);">NOAA Station: Edgely, PA (8549424) · Delaware River</div>
+    </div>
+
+    <!-- Current Tide Status -->
+    <div class="stats-grid" style="margin-bottom:16px;">
+      <div class="stat-card" id="tideCurrentCard">
+        <div class="stat-value" id="tideCurrentHeight">--</div>
+        <div class="stat-label">Current Water Level (ft)</div>
+        <div id="tideCurrentTrend" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="tideNextHigh">--</div>
+        <div class="stat-label">Next High Tide</div>
+        <div id="tideNextHighHeight" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="tideNextLow">--</div>
+        <div class="stat-label">Next Low Tide</div>
+        <div id="tideNextLowHeight" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="tideDateDisplay">--</div>
+        <div class="stat-label">Today's Date</div>
+        <div id="tideLastUpdated" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- Tide Chart -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title" style="margin-bottom:8px;">📈 Today's Tide Chart</div>
+      <div style="position:relative;width:100%;height:200px;">
+        <canvas id="tideChart" style="width:100%;height:200px;"></canvas>
+        <div id="tideChartLoading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">Loading tide data...</div>
+      </div>
+    </div>
+
+    <!-- 7-Day Hi/Lo Table -->
+    <div class="card">
+      <div class="card-title">📅 7-Day High / Low Predictions</div>
+      <div id="tideTable">
+        <div style="text-align:center;padding:24px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">Loading predictions...</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- HOURS MODAL -->
@@ -793,7 +902,7 @@
   // ---- TABS ----
   function switchTab(tab) {
     document.querySelectorAll('.nav-tab').forEach((t,i) => {
-      const tabs = ['dashboard','log','history','schedule','specs'];
+      const tabs = ['dashboard','log','history','schedule','specs','tides'];
       t.classList.toggle('active', tabs[i] === tab);
     });
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -801,6 +910,7 @@
     if (tab === 'dashboard') renderDashboard();
     if (tab === 'history') renderHistory();
     if (tab === 'specs') loadSpecsForm();
+    if (tab === 'tides') loadTides();
   }
 
   // ---- HOURS MODAL ----
@@ -1063,11 +1173,235 @@
     });
   }
 
+  // ---- TIDES ----
+  const TIDE_STATION = '8549424'; // Edgely, PA - Delaware River (closest to Bristol PA)
+  let tideChartInstance = null;
+
+  function formatTideDate(d) {
+    return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  }
+  function formatTideTime(str) {
+    // str is like "2026-04-13 14:30"
+    const parts = str.split(' ');
+    if (!parts[1]) return str;
+    const [h, m] = parts[1].split(':');
+    const hr = parseInt(h);
+    const ampm = hr >= 12 ? 'PM' : 'AM';
+    const hr12 = hr % 12 || 12;
+    return `${hr12}:${m} ${ampm}`;
+  }
+
+  async function loadTides() {
+    const now = new Date();
+    document.getElementById('tideDateDisplay').textContent = now.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    document.getElementById('tideLastUpdated').textContent = 'Updated ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+    // Format dates for NOAA API
+    const pad = n => String(n).padStart(2,'0');
+    const todayStr = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+    const sevenDaysLater = new Date(now); sevenDaysLater.setDate(now.getDate() + 6);
+    const endStr = `${sevenDaysLater.getFullYear()}${pad(sevenDaysLater.getMonth()+1)}${pad(sevenDaysLater.getDate())}`;
+
+    // Fetch hourly predictions for chart (today only)
+    const hourlyUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${todayStr}&end_date=${todayStr}&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=h&units=english&application=df140log&format=json`;
+
+    // Fetch hi/lo for 7 days
+    const hiloUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${todayStr}&end_date=${endStr}&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=df140log&format=json`;
+
+    try {
+      const [hourlyRes, hiloRes] = await Promise.all([fetch(hourlyUrl), fetch(hiloUrl)]);
+      const hourlyData = await hourlyRes.json();
+      const hiloData = await hiloRes.json();
+
+      if (hourlyData.predictions) renderTideChart(hourlyData.predictions, now);
+      if (hiloData.predictions) {
+        renderHiLoTable(hiloData.predictions);
+        renderNextTides(hiloData.predictions, now);
+      }
+    } catch(e) {
+      document.getElementById('tideChartLoading').textContent = 'Unable to load tide data. Check connection.';
+    }
+  }
+
+  function renderTideChart(predictions, now) {
+    document.getElementById('tideChartLoading').style.display = 'none';
+    const canvas = document.getElementById('tideChart');
+    const ctx = canvas.getContext('2d');
+
+    // Scale canvas for retina
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const W = rect.width, H = rect.height;
+    const padding = { top: 20, right: 20, bottom: 36, left: 40 };
+    const chartW = W - padding.left - padding.right;
+    const chartH = H - padding.top - padding.bottom;
+
+    const values = predictions.map(p => parseFloat(p.v));
+    const times = predictions.map(p => p.t);
+    const minV = Math.min(...values) - 0.3;
+    const maxV = Math.max(...values) + 0.3;
+
+    const xScale = i => padding.left + (i / (values.length - 1)) * chartW;
+    const yScale = v => padding.top + chartH - ((v - minV) / (maxV - minV)) * chartH;
+
+    // Background
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = '#1e2d3d';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = padding.top + (i / 4) * chartH;
+      ctx.beginPath(); ctx.moveTo(padding.left, y); ctx.lineTo(W - padding.right, y); ctx.stroke();
+      const label = (maxV - (i / 4) * (maxV - minV)).toFixed(1);
+      ctx.fillStyle = '#586e84';
+      ctx.font = '10px IBM Plex Mono';
+      ctx.textAlign = 'right';
+      ctx.fillText(label + 'ft', padding.left - 4, y + 4);
+    }
+
+    // Gradient fill
+    const gradient = ctx.createLinearGradient(0, padding.top, 0, H - padding.bottom);
+    gradient.addColorStop(0, 'rgba(0,180,216,0.35)');
+    gradient.addColorStop(1, 'rgba(0,180,216,0.02)');
+
+    ctx.beginPath();
+    ctx.moveTo(xScale(0), yScale(values[0]));
+    for (let i = 1; i < values.length; i++) {
+      ctx.lineTo(xScale(i), yScale(values[i]));
+    }
+    ctx.lineTo(xScale(values.length - 1), H - padding.bottom);
+    ctx.lineTo(xScale(0), H - padding.bottom);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(xScale(0), yScale(values[0]));
+    for (let i = 1; i < values.length; i++) {
+      ctx.lineTo(xScale(i), yScale(values[i]));
+    }
+    ctx.strokeStyle = '#00b4d8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Current time marker
+    const nowH = now.getHours() + now.getMinutes() / 60;
+    const nowIdx = Math.round((nowH / 23) * (values.length - 1));
+    if (nowIdx >= 0 && nowIdx < values.length) {
+      const nx = xScale(nowIdx);
+      const ny = yScale(values[nowIdx]);
+      ctx.beginPath(); ctx.moveTo(nx, padding.top); ctx.lineTo(nx, H - padding.bottom);
+      ctx.strokeStyle = 'rgba(247,127,0,0.5)'; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(nx, ny, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#f77f00'; ctx.fill();
+      document.getElementById('tideCurrentHeight').textContent = values[nowIdx].toFixed(1);
+
+      // Trend
+      const prev = nowIdx > 0 ? values[nowIdx - 1] : values[nowIdx];
+      const trend = values[nowIdx] > prev ? '▲ Rising' : '▼ Falling';
+      document.getElementById('tideCurrentTrend').textContent = trend;
+      document.getElementById('tideCurrentTrend').style.color = values[nowIdx] > prev ? '#3ddc84' : '#00b4d8';
+    }
+
+    // Time labels on x-axis
+    ctx.fillStyle = '#586e84';
+    ctx.font = '10px IBM Plex Mono';
+    ctx.textAlign = 'center';
+    const labelEvery = Math.ceil(values.length / 6);
+    for (let i = 0; i < values.length; i += labelEvery) {
+      const label = formatTideTime(times[i]);
+      ctx.fillText(label, xScale(i), H - padding.bottom + 16);
+    }
+  }
+
+  function renderNextTides(predictions, now) {
+    const nowTime = now.getTime();
+    let nextHigh = null, nextLow = null;
+
+    for (const p of predictions) {
+      const [datePart, timePart] = p.t.split(' ');
+      const pDate = new Date(datePart + 'T' + timePart);
+      if (pDate.getTime() > nowTime) {
+        if (!nextHigh && p.type === 'H') nextHigh = p;
+        if (!nextLow && p.type === 'L') nextLow = p;
+        if (nextHigh && nextLow) break;
+      }
+    }
+
+    if (nextHigh) {
+      document.getElementById('tideNextHigh').textContent = formatTideTime(nextHigh.t);
+      document.getElementById('tideNextHighHeight').textContent = parseFloat(nextHigh.v).toFixed(2) + ' ft';
+    }
+    if (nextLow) {
+      document.getElementById('tideNextLow').textContent = formatTideTime(nextLow.t);
+      document.getElementById('tideNextLowHeight').textContent = parseFloat(nextLow.v).toFixed(2) + ' ft';
+    }
+  }
+
+  function renderHiLoTable(predictions) {
+    // Group by date
+    const byDay = {};
+    for (const p of predictions) {
+      const day = p.t.split(' ')[0];
+      if (!byDay[day]) byDay[day] = [];
+      byDay[day].push(p);
+    }
+
+    const days = Object.keys(byDay).sort();
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    let html = `<table class="schedule-table" style="width:100%">
+      <thead><tr>
+        <th>Date</th>
+        <th>🔺 High</th>
+        <th style="color:var(--text-dim)">Time</th>
+        <th>🔻 Low</th>
+        <th style="color:var(--text-dim)">Time</th>
+        <th>🔺 High 2</th>
+        <th style="color:var(--text-dim)">Time</th>
+      </tr></thead><tbody>`;
+
+    for (const day of days) {
+      const d = new Date(day + 'T12:00:00');
+      const label = `${dayNames[d.getDay()]} ${monthNames[d.getMonth()]} ${d.getDate()}`;
+      const tides = byDay[day];
+      const highs = tides.filter(t => t.type === 'H');
+      const lows = tides.filter(t => t.type === 'L');
+
+      html += `<tr>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${label}</td>
+        <td style="color:var(--accent)">${highs[0] ? parseFloat(highs[0].v).toFixed(2) + ' ft' : '—'}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">${highs[0] ? formatTideTime(highs[0].t) : ''}</td>
+        <td style="color:#64b5f6">${lows[0] ? parseFloat(lows[0].v).toFixed(2) + ' ft' : '—'}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">${lows[0] ? formatTideTime(lows[0].t) : ''}</td>
+        <td style="color:var(--accent)">${highs[1] ? parseFloat(highs[1].v).toFixed(2) + ' ft' : '—'}</td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">${highs[1] ? formatTideTime(highs[1].t) : ''}</td>
+      </tr>`;
+    }
+
+    html += '</tbody></table>';
+    document.getElementById('tideTable').innerHTML = html;
+  }
+
   // ---- INIT ----
   loadState();
   updateHoursDisplay();
   renderDashboard();
   document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+  // Pre-populate model if not already set
+  if (!state.specs || !state.specs.model) {
+    if (!state.specs) state.specs = {};
+    state.specs.model = 'DF140BTLW';
+    saveState();
+  }
 
   document.getElementById('hoursModal').addEventListener('click', function(e) {
     if (e.target === this) closeHoursModal();
