@@ -819,7 +819,7 @@
   <div class="section" id="section-tides">
     <div class="section-header">
       <div class="section-title">Tides — Bristol, PA</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);">NOAA Station: Edgely, PA (8549424) · Delaware River</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);">Tides: NOAA Edgely PA (8549424) · Temp: NOAA Burlington NJ (8539094)</div>
     </div>
 
     <!-- Current Tide Status -->
@@ -840,18 +840,9 @@
         <div id="tideNextLowHeight" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="tideDateDisplay">--</div>
-        <div class="stat-label">Today's Date</div>
-        <div id="tideLastUpdated" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
-      </div>
-    </div>
-
-    <!-- Tide Chart -->
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-title" style="margin-bottom:8px;">📈 Today's Tide Chart</div>
-      <div style="position:relative;width:100%;height:200px;">
-        <canvas id="tideChart" style="width:100%;height:200px;"></canvas>
-        <div id="tideChartLoading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">Loading tide data...</div>
+        <div class="stat-value" id="waterTempDisplay">--</div>
+        <div class="stat-label">Water Temp °F</div>
+        <div id="waterTempSub" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;">Burlington, NJ · Delaware R.</div>
       </div>
     </div>
 
@@ -1174,14 +1165,13 @@
   }
 
   // ---- TIDES ----
-  const TIDE_STATION = '8549424'; // Edgely, PA - Delaware River (closest to Bristol PA)
-  let tideChartInstance = null;
+  const TIDE_STATION = '8549424'; // Edgely, PA - closest to Bristol PA
+  const TEMP_STATION = '8539094'; // Burlington, NJ - has water temp sensor, across river from Bristol
 
   function formatTideDate(d) {
     return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
   }
   function formatTideTime(str) {
-    // str is like "2026-04-13 14:30"
     const parts = str.split(' ');
     if (!parts[1]) return str;
     const [h, m] = parts[1].split(':');
@@ -1193,131 +1183,68 @@
 
   async function loadTides() {
     const now = new Date();
-    document.getElementById('tideDateDisplay').textContent = now.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    document.getElementById('tideLastUpdated').textContent = 'Updated ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-
-    // Format dates for NOAA API
     const pad = n => String(n).padStart(2,'0');
     const todayStr = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
-    const sevenDaysLater = new Date(now); sevenDaysLater.setDate(now.getDate() + 6);
+    const sevenDaysLater = new Date(now);
+    sevenDaysLater.setDate(now.getDate() + 6);
     const endStr = `${sevenDaysLater.getFullYear()}${pad(sevenDaysLater.getMonth()+1)}${pad(sevenDaysLater.getDate())}`;
 
-    // Fetch hourly predictions for chart (today only)
-    const hourlyUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${todayStr}&end_date=${todayStr}&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=h&units=english&application=df140log&format=json`;
-
-    // Fetch hi/lo for 7 days
+    // Hi/Lo predictions for 7 days (tide station)
     const hiloUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${todayStr}&end_date=${endStr}&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=df140log&format=json`;
 
-    try {
-      const [hourlyRes, hiloRes] = await Promise.all([fetch(hourlyUrl), fetch(hiloUrl)]);
-      const hourlyData = await hourlyRes.json();
-      const hiloData = await hiloRes.json();
+    // Current water level observed (tide station)
+    const wlUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=${TIDE_STATION}&product=water_level&datum=MLLW&time_zone=lst_ldt&units=english&application=df140log&format=json`;
 
-      if (hourlyData.predictions) renderTideChart(hourlyData.predictions, now);
+    // Water temperature (Burlington NJ station - has temp sensor)
+    const tempUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=${TEMP_STATION}&product=water_temperature&units=english&time_zone=lst_ldt&application=df140log&format=json`;
+
+    try {
+      const [hiloRes, wlRes, tempRes] = await Promise.all([
+        fetch(hiloUrl),
+        fetch(wlUrl),
+        fetch(tempUrl)
+      ]);
+
+      const hiloData = await hiloRes.json();
+      const wlData = await wlRes.json();
+      const tempData = await tempRes.json();
+
+      // Water level
+      if (wlData.data && wlData.data.length) {
+        const latest = wlData.data[wlData.data.length - 1];
+        const val = parseFloat(latest.v);
+        document.getElementById('tideCurrentHeight').textContent = val.toFixed(1);
+        // Compare to previous reading for trend
+        if (wlData.data.length > 1) {
+          const prev = parseFloat(wlData.data[wlData.data.length - 2].v);
+          const trend = val > prev ? '▲ Rising' : val < prev ? '▼ Falling' : '→ Steady';
+          const trendEl = document.getElementById('tideCurrentTrend');
+          trendEl.textContent = trend + ' · as of ' + formatTideTime(latest.t);
+          trendEl.style.color = val > prev ? '#3ddc84' : '#00b4d8';
+        }
+      } else {
+        document.getElementById('tideCurrentTrend').textContent = 'No live data';
+      }
+
+      // Water temperature
+      if (tempData.data && tempData.data.length) {
+        const tempVal = parseFloat(tempData.data[tempData.data.length - 1].v);
+        document.getElementById('waterTempDisplay').textContent = tempVal.toFixed(1) + '°';
+        document.getElementById('waterTempSub').textContent = 'Burlington, NJ · Delaware R. · ' + formatTideTime(tempData.data[tempData.data.length-1].t);
+      } else {
+        document.getElementById('waterTempDisplay').textContent = 'N/A';
+        document.getElementById('waterTempSub').textContent = 'Temp data unavailable';
+      }
+
+      // Hi/Lo predictions
       if (hiloData.predictions) {
         renderHiLoTable(hiloData.predictions);
         renderNextTides(hiloData.predictions, now);
       }
+
     } catch(e) {
-      document.getElementById('tideChartLoading').textContent = 'Unable to load tide data. Check connection.';
-    }
-  }
-
-  function renderTideChart(predictions, now) {
-    document.getElementById('tideChartLoading').style.display = 'none';
-    const canvas = document.getElementById('tideChart');
-    const ctx = canvas.getContext('2d');
-
-    // Scale canvas for retina
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-
-    const W = rect.width, H = rect.height;
-    const padding = { top: 20, right: 20, bottom: 36, left: 40 };
-    const chartW = W - padding.left - padding.right;
-    const chartH = H - padding.top - padding.bottom;
-
-    const values = predictions.map(p => parseFloat(p.v));
-    const times = predictions.map(p => p.t);
-    const minV = Math.min(...values) - 0.3;
-    const maxV = Math.max(...values) + 0.3;
-
-    const xScale = i => padding.left + (i / (values.length - 1)) * chartW;
-    const yScale = v => padding.top + chartH - ((v - minV) / (maxV - minV)) * chartH;
-
-    // Background
-    ctx.clearRect(0, 0, W, H);
-
-    // Grid lines
-    ctx.strokeStyle = '#1e2d3d';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-      const y = padding.top + (i / 4) * chartH;
-      ctx.beginPath(); ctx.moveTo(padding.left, y); ctx.lineTo(W - padding.right, y); ctx.stroke();
-      const label = (maxV - (i / 4) * (maxV - minV)).toFixed(1);
-      ctx.fillStyle = '#586e84';
-      ctx.font = '10px IBM Plex Mono';
-      ctx.textAlign = 'right';
-      ctx.fillText(label + 'ft', padding.left - 4, y + 4);
-    }
-
-    // Gradient fill
-    const gradient = ctx.createLinearGradient(0, padding.top, 0, H - padding.bottom);
-    gradient.addColorStop(0, 'rgba(0,180,216,0.35)');
-    gradient.addColorStop(1, 'rgba(0,180,216,0.02)');
-
-    ctx.beginPath();
-    ctx.moveTo(xScale(0), yScale(values[0]));
-    for (let i = 1; i < values.length; i++) {
-      ctx.lineTo(xScale(i), yScale(values[i]));
-    }
-    ctx.lineTo(xScale(values.length - 1), H - padding.bottom);
-    ctx.lineTo(xScale(0), H - padding.bottom);
-    ctx.closePath();
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-    // Line
-    ctx.beginPath();
-    ctx.moveTo(xScale(0), yScale(values[0]));
-    for (let i = 1; i < values.length; i++) {
-      ctx.lineTo(xScale(i), yScale(values[i]));
-    }
-    ctx.strokeStyle = '#00b4d8';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Current time marker
-    const nowH = now.getHours() + now.getMinutes() / 60;
-    const nowIdx = Math.round((nowH / 23) * (values.length - 1));
-    if (nowIdx >= 0 && nowIdx < values.length) {
-      const nx = xScale(nowIdx);
-      const ny = yScale(values[nowIdx]);
-      ctx.beginPath(); ctx.moveTo(nx, padding.top); ctx.lineTo(nx, H - padding.bottom);
-      ctx.strokeStyle = 'rgba(247,127,0,0.5)'; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.beginPath(); ctx.arc(nx, ny, 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#f77f00'; ctx.fill();
-      document.getElementById('tideCurrentHeight').textContent = values[nowIdx].toFixed(1);
-
-      // Trend
-      const prev = nowIdx > 0 ? values[nowIdx - 1] : values[nowIdx];
-      const trend = values[nowIdx] > prev ? '▲ Rising' : '▼ Falling';
-      document.getElementById('tideCurrentTrend').textContent = trend;
-      document.getElementById('tideCurrentTrend').style.color = values[nowIdx] > prev ? '#3ddc84' : '#00b4d8';
-    }
-
-    // Time labels on x-axis
-    ctx.fillStyle = '#586e84';
-    ctx.font = '10px IBM Plex Mono';
-    ctx.textAlign = 'center';
-    const labelEvery = Math.ceil(values.length / 6);
-    for (let i = 0; i < values.length; i += labelEvery) {
-      const label = formatTideTime(times[i]);
-      ctx.fillText(label, xScale(i), H - padding.bottom + 16);
+      document.getElementById('tideCurrentTrend').textContent = 'Unable to load — check connection';
+      document.getElementById('waterTempDisplay').textContent = 'N/A';
     }
   }
 
