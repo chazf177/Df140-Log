@@ -3,510 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DF140 Maintenance Log</title>
+<title>DF140 Log</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0e14;
-    --panel: #111720;
-    --panel2: #161d28;
-    --border: #1e2d3d;
-    --accent: #00b4d8;
-    --accent2: #f77f00;
-    --accent3: #2ec4b6;
-    --warn: #e63946;
-    --text: #c9d1d9;
-    --text-dim: #586e84;
-    --text-bright: #e8f1fa;
-    --green: #3ddc84;
-  }
+:root {
+  --bg:#0a0e14;--panel:#111720;--panel2:#161d28;--border:#1e2d3d;
+  --accent:#00b4d8;--accent2:#f77f00;--accent3:#2ec4b6;--warn:#e63946;
+  --text:#c9d1d9;--text-dim:#586e84;--text-bright:#e8f1fa;--green:#3ddc84;
+}
+body.light {
+  --bg:#f0f4f8;--panel:#ffffff;--panel2:#e8edf2;--border:#d0d7de;
+  --text:#24292f;--text-dim:#57606a;--text-bright:#1a1f24;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+.header{background:var(--panel);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;gap:12px;height:60px;position:sticky;top:0;z-index:100;}
+.header-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--accent);line-height:1;}
+.header-divider{width:1px;height:28px;background:var(--border);}
+.header-hours{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.hours-display{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);letter-spacing:2px;}
+.hours-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;line-height:1.3;}
+.btn-hours{background:var(--accent);color:#000;border:none;border-radius:4px;padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;cursor:pointer;letter-spacing:1px;}
+.theme-toggle{background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:16px;cursor:pointer;line-height:1;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'IBM Plex Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* NAV */
+.nav{display:flex;gap:2px;padding:12px 16px 0;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-tab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:8px 10px;border:1px solid transparent;border-bottom:none;border-radius:4px 4px 0 0;cursor:pointer;color:var(--text-dim);background:transparent;white-space:nowrap;position:relative;bottom:-1px;}
+.nav-tab.active{color:var(--accent);border-color:var(--border);border-bottom-color:var(--panel);background:var(--panel);}
+.nav-badge{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;background:var(--warn);color:#fff;border-radius:50%;font-size:8px;margin-left:4px;vertical-align:middle;}
 
-  /* HEADER */
-  .header {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    height: 64px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    letter-spacing: 3px;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .header-sub {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .header-divider { width: 1px; height: 32px; background: var(--border); margin: 0 4px; }
-  .header-hours {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .hours-display {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: var(--accent);
-    letter-spacing: 2px;
-  }
-  .hours-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    line-height: 1.3;
-  }
-  .btn-hours {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: opacity .15s;
-  }
-  .btn-hours:hover { opacity: .85; }
+/* MAIN */
+.main{padding:16px;max-width:1100px;margin:0 auto;}
+.section{display:none;}
+.section.active{display:block;}
 
-  /* NAV TABS */
-  .nav {
-    display: flex;
-    gap: 2px;
-    padding: 16px 24px 0;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .nav::-webkit-scrollbar { display: none; }
-  .nav-tab {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 10px 20px;
-    border: 1px solid transparent;
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
-    cursor: pointer;
-    color: var(--text-dim);
-    background: transparent;
-    transition: all .15s;
-    position: relative;
-    bottom: -1px;
-  }
-  .nav-tab:hover { color: var(--text); }
-  .nav-tab.active {
-    color: var(--accent);
-    border-color: var(--border);
-    border-bottom-color: var(--panel);
-    background: var(--panel);
-  }
-  .nav-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    background: var(--warn);
-    color: #fff;
-    border-radius: 50%;
-    font-size: 9px;
-    margin-left: 6px;
-    vertical-align: middle;
-  }
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:14px;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--text-bright);margin-bottom:14px;}
 
-  /* MAIN */
-  .main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--accent);line-height:1;margin-bottom:4px;}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
 
-  /* SECTION */
-  .section { display: none; }
-  .section.active { display: block; }
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+input,select,textarea{background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text-bright);font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:64px;}
+select option{background:var(--panel2);}
 
-  /* CARDS */
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .card-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 2px;
-    color: var(--text-bright);
-    margin-bottom: 16px;
-  }
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:4px;border:none;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:1px;cursor:pointer;transition:opacity .15s;}
+.btn:hover{opacity:.85;}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border);}
+.btn-danger{background:rgba(230,57,70,.2);color:var(--warn);border:1px solid rgba(230,57,70,.3);}
+.btn-sm{padding:5px 10px;font-size:10px;}
 
-  /* SCHEDULE TABLE */
-  .schedule-table { width: 100%; border-collapse: collapse; }
-  .schedule-table th {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    text-align: left;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .schedule-table td {
-    font-size: 13px;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-  .schedule-table tr:last-child td { border-bottom: none; }
-  .schedule-table tr:hover td { background: var(--panel2); }
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:6px;padding:20px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s;}
+.upload-zone:hover{border-color:var(--accent);}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-text{font-size:12px;color:var(--text-dim);}
+.upload-text span{color:var(--accent);}
 
-  .tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    font-weight: 500;
-  }
-  .tag-50 { background: rgba(0,180,216,.15); color: var(--accent); border: 1px solid rgba(0,180,216,.3); }
-  .tag-100 { background: rgba(247,127,0,.15); color: var(--accent2); border: 1px solid rgba(247,127,0,.3); }
-  .tag-200 { background: rgba(230,57,70,.15); color: var(--warn); border: 1px solid rgba(230,57,70,.3); }
-  .tag-special { background: rgba(46,196,182,.15); color: var(--accent3); border: 1px solid rgba(46,196,182,.3); }
+/* TAGS */
+.tag{display:inline-block;padding:2px 7px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;font-weight:500;}
+.tag-50{background:rgba(0,180,216,.15);color:var(--accent);border:1px solid rgba(0,180,216,.3);}
+.tag-100{background:rgba(247,127,0,.15);color:var(--accent2);border:1px solid rgba(247,127,0,.3);}
+.tag-200{background:rgba(230,57,70,.15);color:var(--warn);border:1px solid rgba(230,57,70,.3);}
+.tag-special{background:rgba(46,196,182,.15);color:var(--accent3);border:1px solid rgba(46,196,182,.3);}
 
-  .due-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-  }
-  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green { background: var(--green); }
-  .dot-yellow { background: var(--accent2); }
-  .dot-red { background: var(--warn); animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+/* LOG ENTRIES */
+.log-entry{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;}
+.entry-date{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-align:center;padding:7px 10px;background:var(--bg);border-radius:4px;border:1px solid var(--border);min-width:64px;}
+.entry-date .day{font-size:18px;font-weight:500;color:var(--text-bright);display:block;}
+.entry-type{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;color:var(--text-bright);margin-bottom:3px;}
+.entry-badge{display:inline-block;background:rgba(0,180,216,.12);color:var(--accent);border:1px solid rgba(0,180,216,.25);border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:1px 6px;margin-bottom:4px;}
+.entry-notes{font-size:12px;color:var(--text-dim);line-height:1.5;}
+.receipt-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:3px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);cursor:pointer;text-decoration:none;transition:border-color .15s,color .15s;max-width:fit-content;margin-top:4px;}
+.receipt-chip:hover{border-color:var(--accent);color:var(--accent);}
 
-  /* LOG FORM */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group.full { grid-column: 1 / -1; }
-  label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-  input, select, textarea {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-bright);
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 13px;
-    padding: 9px 12px;
-    outline: none;
-    transition: border-color .15s;
-  }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-  textarea { resize: vertical; min-height: 72px; }
-  select option { background: var(--panel2); }
+/* REMINDERS */
+.reminder-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);}
+.reminder-item:last-child{border-bottom:none;}
+.reminder-name{font-size:13px;color:var(--text-bright);flex:1;}
+.reminder-due{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-green{background:var(--green);}
+.dot-yellow{background:var(--accent2);}
+.dot-red{background:var(--warn);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 4px;
-    border: none;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: opacity .15s, transform .1s;
-  }
-  .btn:hover { opacity: .85; }
-  .btn:active { transform: scale(.98); }
-  .btn-primary { background: var(--accent); color: #000; }
-  .btn-secondary { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
-  .btn-danger { background: rgba(230,57,70,.2); color: var(--warn); border: 1px solid rgba(230,57,70,.3); }
+/* SCHEDULE TABLE */
+.schedule-table{width:100%;border-collapse:collapse;}
+.schedule-table th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);}
+.schedule-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.schedule-table tr:last-child td{border-bottom:none;}
+.schedule-table tr:hover td{background:var(--panel2);}
 
-  /* RECEIPT UPLOAD */
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: 6px;
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .2s, background .2s;
-    position: relative;
-  }
-  .upload-zone:hover { border-color: var(--accent); background: rgba(0,180,216,.04); }
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .upload-text { font-size: 13px; color: var(--text-dim); }
-  .upload-text span { color: var(--accent); }
+/* SPECS GRID */
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 
-  /* LOG ENTRIES */
-  .log-entry {
-    background: var(--panel2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 12px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 16px;
-    align-items: start;
-    animation: slideIn .2s ease;
-  }
-  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--text-bright);}
 
-  .entry-date {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    text-align: center;
-    padding: 8px 12px;
-    background: var(--bg);
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    min-width: 70px;
-  }
-  .entry-date .day { font-size: 20px; font-weight: 500; color: var(--text-bright); display: block; }
+/* PROGRESS */
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:2px;transition:width .5s ease;}
 
-  .entry-body { flex: 1; }
-  .entry-type {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
-    letter-spacing: 1.5px;
-    color: var(--text-bright);
-    margin-bottom: 4px;
-  }
-  .entry-hours-badge {
-    display: inline-block;
-    background: rgba(0,180,216,.12);
-    color: var(--accent);
-    border: 1px solid rgba(0,180,216,.25);
-    border-radius: 3px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    padding: 1px 7px;
-    margin-bottom: 6px;
-  }
-  .entry-notes { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:24px;width:100%;max-width:460px;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text-bright);margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;justify-content:flex-end;}
 
-  .entry-receipts { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
-  .receipt-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 4px 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: border-color .15s, color .15s;
-    text-decoration: none;
-    max-width: fit-content;
-  }
-  .receipt-chip:hover { border-color: var(--accent); color: var(--accent); }
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);}
+.empty-state .icon{font-size:36px;margin-bottom:10px;}
+.empty-state p{font-size:13px;line-height:1.6;}
 
-  /* STATS */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .stat-card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-  }
-  .stat-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 40px;
-    letter-spacing: 2px;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-  .stat-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
+/* WEATHER ALERT */
+.weather-alert{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;margin-bottom:10px;font-size:13px;}
+.weather-alert.warn{background:rgba(247,127,0,.12);border:1px solid rgba(247,127,0,.3);color:var(--accent2);}
+.weather-alert.danger{background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.3);color:var(--warn);}
+.weather-alert.ok{background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.3);color:var(--green);}
 
-  /* REMINDERS */
-  .reminder-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .reminder-item:last-child { border-bottom: none; }
-  .reminder-name { font-size: 13px; color: var(--text-bright); flex: 1; }
-  .reminder-due { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); }
-
-  /* MODAL */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.75);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 28px;
-    width: 100%;
-    max-width: 480px;
-    animation: fadeUp .2s ease;
-  }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-  .modal-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: var(--text-bright);
-    margin-bottom: 20px;
-  }
-  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--text-dim);
-  }
-  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state p { font-size: 13px; line-height: 1.6; }
-
-  /* PROGRESS BAR */
-  .progress-wrap { margin-top: 8px; }
-  .progress-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-  .progress-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
-
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 3px;
-    color: var(--text-bright);
-  }
-
-  .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  @media (max-width: 640px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .log-entry { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
-    .header-logo { font-size: 20px; }
-    .nav-tab { padding: 8px 10px; font-size: 9px; letter-spacing: 0.5px; }
-    .main { padding: 12px; }
-    .card { padding: 14px; }
-
-    .specs-grid { grid-template-columns: 1fr !important; }
-
-    /* Specs two-col grid → single col on mobile */
-    #section-specs > div[style*="grid-template-columns:1fr 1fr"],
-    #section-specs > div {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 12px !important;
-    }
-
-    /* Tide stats grid → 2x2 on mobile */
-    #section-tides .stats-grid {
-      grid-template-columns: 1fr 1fr !important;
-    }
-
-    /* Make all tables scroll horizontally */
-    .schedule-table, #tideTable table {
-      display: block;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* Tide 7-day table — allow wrap on mobile */
-    #tideTable .schedule-table td,
-    #tideTable .schedule-table th {
-      white-space: normal;
-      font-size: 11px;
-      padding: 7px 8px;
-    }
-
-    /* Section header wrap on small screens */
-    .section-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-    }
-
-    /* Header: hide divider, shrink hours */
-    .header-divider { display: none; }
-    .hours-display { font-size: 22px; }
-    .header { padding: 0 12px; gap: 10px; }
-    .header-sub { display: none; }
-
-    /* Stat value smaller on mobile */
-    .stat-value { font-size: 28px; }
-    .stat-card { padding: 12px; }
-
-    /* Canvas tide chart full width */
-    #tideChart { width: 100% !important; }
-  }
+/* MOBILE */
+@media(max-width:640px){
+  .form-grid{grid-template-columns:1fr;}
+  .log-entry{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .specs-grid{grid-template-columns:1fr!important;}
+  .main{padding:12px;}
+  .card{padding:12px;}
+  .stat-value{font-size:26px;}
+  .stat-card{padding:12px;}
+  .section-header{flex-direction:column;align-items:flex-start;gap:6px;}
+  .header-divider{display:none;}
+  .hours-display{font-size:22px;}
+  .header{padding:0 12px;gap:8px;}
+  .schedule-table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+}
 </style>
 </head>
 <body>
@@ -514,357 +162,339 @@
 <div class="header">
   <div>
     <div class="header-logo">DF140 LOG</div>
-    <div class="header-sub">Maintenance Tracker</div>
   </div>
   <div class="header-divider"></div>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
   <div class="header-hours">
-    <div>
-      <div class="hours-label">Engine<br>Hours</div>
-    </div>
+    <div class="hours-label">Engine<br>Hours</div>
     <div class="hours-display" id="hoursDisplay">0.0</div>
     <button class="btn-hours" onclick="openHoursModal()">UPDATE</button>
   </div>
 </div>
 
-<div class="nav">
-  <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+<div class="nav" id="mainNav">
+  <button class="nav-tab active" onclick="switchTab('tides')">🌊 Tides</button>
+  <button class="nav-tab" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="nav-tab" onclick="switchTab('fuel')">⛽ Fuel</button>
+  <button class="nav-tab" onclick="switchTab('trips')">🗺 Trips</button>
   <button class="nav-tab" onclick="switchTab('log')">Log Service</button>
   <button class="nav-tab" onclick="switchTab('history')">History</button>
+  <button class="nav-tab" onclick="switchTab('parts')">🔧 Parts</button>
   <button class="nav-tab" onclick="switchTab('schedule')">Schedule</button>
   <button class="nav-tab" onclick="switchTab('specs')">Specs</button>
-  <button class="nav-tab" onclick="switchTab('tides')">Tides</button>
 </div>
 
-<div class="main">
+<div class="main" id="mainSwipe">
 
-  <!-- DASHBOARD -->
-  <div class="section active" id="section-dashboard">
-    <div class="stats-grid" id="statsGrid"></div>
+<!-- TIDES -->
+<div class="section active" id="section-tides">
+  <div class="section-header">
+    <div class="section-title">Tides & Weather</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">NOAA · Edgely PA · Burlington NJ</div>
+  </div>
 
-    <div class="card">
-      <div class="card-title">⚠ Upcoming Services</div>
-      <div id="remindersList"></div>
+  <!-- Weather Alerts -->
+  <div id="weatherAlerts"></div>
+
+  <!-- Weather Card -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="card-title" style="margin-bottom:0;">🌤 Current Weather</div>
+      <div id="weatherLocation" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">Locating...</div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Recent Entries</div>
-      <div id="recentEntries"></div>
+    <div id="weatherLoading" style="text-align:center;padding:14px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">Requesting location...</div>
+    <div id="weatherContent" style="display:none;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;margin-bottom:14px;" id="weatherStats"></div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <div id="weatherHourly" style="display:flex;gap:7px;padding-bottom:4px;min-width:max-content;"></div>
+      </div>
     </div>
   </div>
 
-  <!-- LOG SERVICE -->
-  <div class="section" id="section-log">
-    <div class="section-header">
-      <div class="section-title">Log Service</div>
+  <!-- Tide Stats -->
+  <div class="stats-grid" style="margin-bottom:14px;">
+    <div class="stat-card">
+      <div class="stat-value" id="tideCurrentHeight">--</div>
+      <div class="stat-label">Water Level (ft)</div>
+      <div id="tideCurrentTrend" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px;">Loading...</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="tideNextHigh">--</div>
+      <div class="stat-label">Next High</div>
+      <div id="tideNextHighHeight" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px;"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="tideNextLow">--</div>
+      <div class="stat-label">Next Low</div>
+      <div id="tideNextLowHeight" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px;"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="waterTempDisplay">--</div>
+      <div class="stat-label">Water Temp °F</div>
+      <div id="waterTempSub" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px;">Burlington NJ</div>
+    </div>
+  </div>
+
+  <!-- 7-Day Tides -->
+  <div class="card">
+    <div class="card-title">📅 7-Day Tide Predictions</div>
+    <div id="tideTable"><div style="text-align:center;padding:20px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">Loading...</div></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="section" id="section-dashboard">
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="card"><div class="card-title">⚠ Upcoming Services</div><div id="remindersList"></div></div>
+  <div class="card"><div class="card-title">Recent Activity</div><div id="recentEntries"></div></div>
+</div>
+
+<!-- FUEL LOG -->
+<div class="section" id="section-fuel">
+  <div class="section-header">
+    <div class="section-title">⛽ Fuel Log</div>
+  </div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="fuelDate"></div>
+      <div class="form-group"><label>Engine Hours</label><input type="number" id="fuelHours" placeholder="e.g. 45.5" step="0.1"></div>
+      <div class="form-group"><label>Gallons Added</label><input type="number" id="fuelGallons" placeholder="e.g. 22.4" step="0.1"></div>
+      <div class="form-group"><label>Cost per Gallon ($)</label><input type="number" id="fuelPpg" placeholder="e.g. 4.89" step="0.01"></div>
+      <div class="form-group"><label>Total Cost ($)</label><input type="number" id="fuelCost" placeholder="Auto-calculated" step="0.01" id="fuelCost"></div>
+      <div class="form-group"><label>Location / Marina</label><input type="text" id="fuelLocation" placeholder="e.g. Bristol Marine"></div>
+      <div class="form-group full"><label>Notes</label><textarea id="fuelNotes" placeholder="Any notes..."></textarea></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="saveFuel()">💾 SAVE</button>
+      <button class="btn btn-secondary" onclick="clearFuelForm()">CLEAR</button>
+    </div>
+  </div>
+  <div class="stats-grid" id="fuelStats"></div>
+  <div id="fuelHistory"></div>
+</div>
+
+<!-- TRIP LOG -->
+<div class="section" id="section-trips">
+  <div class="section-header">
+    <div class="section-title">🗺 Trip Log</div>
+  </div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="tripDate"></div>
+      <div class="form-group"><label>Engine Hours Start</label><input type="number" id="tripHrsStart" placeholder="e.g. 10.0" step="0.1"></div>
+      <div class="form-group"><label>Engine Hours End</label><input type="number" id="tripHrsEnd" placeholder="e.g. 12.5" step="0.1"></div>
+      <div class="form-group"><label>Departure</label><input type="text" id="tripFrom" placeholder="e.g. Bristol Wharf"></div>
+      <div class="form-group"><label>Destination</label><input type="text" id="tripTo" placeholder="e.g. Burlington Island"></div>
+      <div class="form-group"><label>Crew / Passengers</label><input type="number" id="tripCrew" placeholder="e.g. 4" min="1"></div>
+      <div class="form-group full"><label>Notes / Highlights</label><textarea id="tripNotes" placeholder="Conditions, highlights, issues..."></textarea></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="saveTrip()">💾 SAVE TRIP</button>
+      <button class="btn btn-secondary" onclick="clearTripForm()">CLEAR</button>
+    </div>
+  </div>
+  <div class="stats-grid" id="tripStats"></div>
+  <div id="tripHistory"></div>
+</div>
+
+<!-- LOG SERVICE -->
+<div class="section" id="section-log">
+  <div class="section-header"><div class="section-title">Log Service</div></div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Date</label><input type="date" id="logDate"></div>
+      <div class="form-group"><label>Engine Hours at Service</label><input type="number" id="logHours" placeholder="e.g. 100" step="0.1" min="0"></div>
+      <div class="form-group full">
+        <label>Service Type</label>
+        <select id="logType">
+          <option value="">— Select service type —</option>
+          <optgroup label="Break-In">
+            <option>10-Hour Break-In Service</option>
+          </optgroup>
+          <optgroup label="50hr / 3-Month">
+            <option>Spark Plug Inspect</option>
+            <option>Breather Hose & Fuel Line Inspect</option>
+            <option>Lubrication / Grease Fittings</option>
+            <option>Anodes & Bonding Wires Inspect</option>
+            <option>Battery Inspect</option>
+            <option>Propeller Inspect</option>
+          </optgroup>
+          <optgroup label="100hr / 6-Month">
+            <option>Engine Oil & Filter Change</option>
+            <option>Gear Oil Change</option>
+            <option>Spark Plug Replace</option>
+            <option>Full 100-Hour Service</option>
+          </optgroup>
+          <optgroup label="200hr / Annual">
+            <option>Full Annual Service</option>
+            <option>Fuel Line Replace</option>
+            <option>O2 Feedback / Fuel Mixture Check</option>
+            <option>Water-Separating Fuel Filter Replace</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option>Impeller Replace</option>
+            <option>Thermostat Replace</option>
+            <option>Transom Hardware Retorque</option>
+            <option>Other</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group full"><label>Custom Description (optional)</label><input type="text" id="logDesc" placeholder="e.g. Replaced impeller, changed zincs"></div>
+      <div class="form-group full"><label>Notes</label><textarea id="logNotes" placeholder="Observations, parts used, next action items..."></textarea></div>
+      <div class="form-group"><label>Cost ($)</label><input type="number" id="logCost" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="form-group"><label>Serviced By</label><input type="text" id="logTech" placeholder="e.g. Suzuki Marine Dealer"></div>
+      <div class="form-group full">
+        <label>Receipts / Documents</label>
+        <div class="upload-zone">
+          <input type="file" id="receiptUpload" multiple accept="image/*,.pdf" onchange="handleFileUpload(event)">
+          <div style="font-size:24px;margin-bottom:6px;">📎</div>
+          <div class="upload-text">Drop files or <span>click to browse</span></div>
+        </div>
+        <div id="uploadPreview" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;"></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="saveEntry()">💾 SAVE ENTRY</button>
+      <button class="btn btn-secondary" onclick="clearForm()">CLEAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="section" id="section-history">
+  <div class="section-header">
+    <div class="section-title">Service History</div>
+    <button class="btn btn-secondary btn-sm" onclick="exportLog()">⬇ CSV</button>
+  </div>
+  <div id="historyList"></div>
+</div>
+
+<!-- PARTS INVENTORY -->
+<div class="section" id="section-parts">
+  <div class="section-header"><div class="section-title">🔧 Parts Inventory</div></div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="form-group"><label>Part Name</label><input type="text" id="partName" placeholder="e.g. Impeller"></div>
+      <div class="form-group"><label>Part Number</label><input type="text" id="partNumber" placeholder="e.g. 17400-93J02"></div>
+      <div class="form-group"><label>Quantity On Board</label><input type="number" id="partQty" placeholder="1" min="0"></div>
+      <div class="form-group"><label>Min Stock Level</label><input type="number" id="partMin" placeholder="1" min="0"></div>
+      <div class="form-group full"><label>Notes</label><input type="text" id="partNotes" placeholder="Supplier, location on boat, etc."></div>
+    </div>
+    <div style="margin-top:14px;"><button class="btn btn-primary" onclick="savePart()">➕ ADD PART</button></div>
+  </div>
+  <div id="partsList"></div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="section" id="section-schedule">
+  <div class="section-header"><div class="section-title">Maintenance Schedule</div></div>
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Break-In Period — First 10 Hours</div>
+    <table class="schedule-table">
+      <thead><tr><th>Phase</th><th>Duration</th><th>RPM Limit</th><th>Instructions</th></tr></thead>
+      <tbody>
+        <tr><td>Warm-Up</td><td>5 min</td><td>Idle</td><td>Cold start — idle in neutral</td></tr>
+        <tr><td>Phase 1</td><td>15 min</td><td>Idle in gear</td><td>Lowest in-gear speed</td></tr>
+        <tr><td>Phase 2</td><td>1 hr 45 min</td><td>&lt;3,000 RPM</td><td>Under ½ throttle only</td></tr>
+        <tr><td>Phase 3</td><td>Hour 3</td><td>~4,000 RPM</td><td>¾ throttle max, no WOT</td></tr>
+        <tr><td>Phase 4</td><td>Hours 4–10</td><td>Any — with limits</td><td>WOT max 5 min continuous</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">Periodic Maintenance Chart</div>
+    <table class="schedule-table">
+      <thead><tr><th>Service Item</th><th>Interval</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Spark Plugs</td><td><span class="tag tag-50">50hr/3mo</span></td><td>Inspect, clean, gap</td></tr>
+        <tr><td>Spark Plugs</td><td><span class="tag tag-200">200hr/12mo</span></td><td>Replace</td></tr>
+        <tr><td>Engine Oil & Filter</td><td><span class="tag tag-100">100hr/6mo</span></td><td>Replace</td></tr>
+        <tr><td>Gear Oil</td><td><span class="tag tag-100">100hr/6mo</span></td><td>Replace</td></tr>
+        <tr><td>Fuel Lines</td><td><span class="tag tag-special">Every 2 Yrs</span></td><td>Replace</td></tr>
+        <tr><td>Fuel Filter</td><td><span class="tag tag-200">Annual</span></td><td>Replace element</td></tr>
+        <tr><td>Grease Fittings</td><td><span class="tag tag-50">50hr/3mo</span></td><td>Grease all fittings</td></tr>
+        <tr><td>Anodes & Bonding</td><td><span class="tag tag-50">50hr/3mo</span></td><td>Inspect, replace if &gt;50% gone</td></tr>
+        <tr><td>Battery</td><td><span class="tag tag-50">50hr/3mo</span></td><td>Inspect terminals, test charge</td></tr>
+        <tr><td>O2 / Fuel Mixture</td><td><span class="tag tag-special">Every 2 Yrs</span></td><td>Dealer check</td></tr>
+        <tr><td>Transom Hardware</td><td><span class="tag tag-special">Post Break-In</span></td><td>Retorque after 10hrs</td></tr>
+        <tr><td>Propeller</td><td><span class="tag tag-50">50hr/3mo</span></td><td>Inspect blades, hub, nut</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SPECS -->
+<div class="section" id="section-specs">
+  <div class="section-header"><div class="section-title">Engine Specifications</div></div>
+  <div class="specs-grid">
+    <div class="card">
+      <div class="card-title">⚙ Core Engine</div>
+      <table class="schedule-table"><tbody>
+        <tr><td style="color:var(--text-dim);width:50%">Type</td><td>4-Stroke DOHC 16-Valve</td></tr>
+        <tr><td style="color:var(--text-dim)">Cylinders</td><td>4 (In-Line)</td></tr>
+        <tr><td style="color:var(--text-dim)">Displacement</td><td>2,044 cm³ (124.6 cu in)</td></tr>
+        <tr><td style="color:var(--text-dim)">Bore × Stroke</td><td>86mm × 88mm</td></tr>
+        <tr><td style="color:var(--text-dim)">Compression</td><td>10.6:1 (DF140B)</td></tr>
+        <tr><td style="color:var(--text-dim)">WOT RPM</td><td>5,600 – 6,200</td></tr>
+        <tr><td style="color:var(--text-dim)">Horsepower</td><td>140 HP</td></tr>
+      </tbody></table>
     </div>
     <div class="card">
+      <div class="card-title">⚡ Fuel & Ignition</div>
+      <table class="schedule-table"><tbody>
+        <tr><td style="color:var(--text-dim);width:50%">Fuel System</td><td>Multipoint EFI</td></tr>
+        <tr><td style="color:var(--text-dim)">Fuel Type</td><td>Unleaded 91 Octane min</td></tr>
+        <tr><td style="color:var(--text-dim)">Spark Plug</td><td>NGK BKR6E</td></tr>
+        <tr><td style="color:var(--text-dim)">Oil Capacity</td><td>5.8 qt / 5.5 L</td></tr>
+        <tr><td style="color:var(--text-dim)">Recommended Oil</td><td>10W-40 API SE–SJ</td></tr>
+        <tr><td style="color:var(--text-dim)">Lean Burn</td><td>Yes</td></tr>
+        <tr><td style="color:var(--text-dim)">Alternator</td><td>12V 40A</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">🔩 Drivetrain</div>
+      <table class="schedule-table"><tbody>
+        <tr><td style="color:var(--text-dim);width:50%">Gear Ratio</td><td>2.59:1</td></tr>
+        <tr><td style="color:var(--text-dim)">Gear Shift</td><td>F-N-R</td></tr>
+        <tr><td style="color:var(--text-dim)">Trim</td><td>Power Trim & Tilt</td></tr>
+        <tr><td style="color:var(--text-dim)">Counter Rotation</td><td>Available</td></tr>
+        <tr><td style="color:var(--text-dim)">Prop Pitch Range</td><td>15–28 in</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">📐 Physical</div>
+      <table class="schedule-table"><tbody>
+        <tr><td style="color:var(--text-dim);width:50%">Weight</td><td>410 lbs / 186 kg</td></tr>
+        <tr><td style="color:var(--text-dim)">L Shaft (20")</td><td>508–511 mm</td></tr>
+        <tr><td style="color:var(--text-dim)">X Shaft (25")</td><td>635–638 mm</td></tr>
+        <tr><td style="color:var(--text-dim)">Emissions</td><td>CARB 3-Star Ultra Low</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card" style="grid-column:1/-1;">
+      <div class="card-title">🛠 Your Motor</div>
       <div class="form-grid">
-        <div class="form-group">
-          <label>Date</label>
-          <input type="date" id="logDate">
-        </div>
-        <div class="form-group">
-          <label>Engine Hours at Service</label>
-          <input type="number" id="logHours" placeholder="e.g. 100" step="0.1" min="0">
-        </div>
-        <div class="form-group full">
-          <label>Service Type</label>
-          <select id="logType">
-            <option value="">— Select service type —</option>
-            <optgroup label="Break-In">
-              <option>10-Hour Break-In Service</option>
-            </optgroup>
-            <optgroup label="50hr / 3-Month">
-              <option>Spark Plug Inspect</option>
-              <option>Breather Hose & Fuel Line Inspect</option>
-              <option>Lubrication / Grease Fittings</option>
-              <option>Anodes & Bonding Wires Inspect</option>
-              <option>Battery Inspect</option>
-            </optgroup>
-            <optgroup label="100hr / 6-Month">
-              <option>Engine Oil & Filter Change</option>
-              <option>Gear Oil Change</option>
-              <option>Spark Plug Replace</option>
-              <option>Full 100-Hour Service</option>
-            </optgroup>
-            <optgroup label="200hr / Annual">
-              <option>Full Annual Service</option>
-              <option>Fuel Line Replace</option>
-              <option>O2 Feedback / Fuel Mixture Check</option>
-              <option>Water-Separating Fuel Filter Replace</option>
-            </optgroup>
-            <optgroup label="Other">
-              <option>Propeller Service</option>
-              <option>Transom Hardware Retorque</option>
-              <option>Impeller Replace</option>
-              <option>Thermostat Replace</option>
-              <option>Other</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label>Custom Description (optional)</label>
-          <input type="text" id="logDesc" placeholder="e.g. Replaced impeller, changed zincs">
-        </div>
-        <div class="form-group full">
-          <label>Notes</label>
-          <textarea id="logNotes" placeholder="Observations, parts used, next action items..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Cost ($)</label>
-          <input type="number" id="logCost" placeholder="0.00" step="0.01" min="0">
-        </div>
-        <div class="form-group">
-          <label>Serviced By</label>
-          <input type="text" id="logTech" placeholder="e.g. Suzuki Marine Dealer">
-        </div>
-        <div class="form-group full">
-          <label>Receipts / Documents</label>
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" id="receiptUpload" multiple accept="image/*,.pdf" onchange="handleFileUpload(event)">
-            <div class="upload-icon">📎</div>
-            <div class="upload-text">Drop files here or <span>click to browse</span></div>
-            <div class="upload-text" style="font-size:11px;margin-top:4px;">JPG, PNG, PDF supported</div>
-          </div>
-          <div id="uploadPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"></div>
-        </div>
+        <div class="form-group"><label>Model / Variant</label><input type="text" id="specModel" placeholder="e.g. DF140BTLW" oninput="saveSpecs()"></div>
+        <div class="form-group"><label>Serial Number</label><input type="text" id="specSerial" placeholder="Found on mounting bracket" oninput="saveSpecs()"></div>
+        <div class="form-group"><label>Year</label><input type="text" id="specYear" placeholder="e.g. 2024" oninput="saveSpecs()"></div>
+        <div class="form-group"><label>Shaft Length</label><select id="specShaft" onchange="saveSpecs()"><option value="">— Select —</option><option>L (20 in)</option><option>X (25 in)</option></select></div>
+        <div class="form-group"><label>Propeller Installed</label><input type="text" id="specProp" placeholder="e.g. 3-blade SS 19p" oninput="saveSpecs()"></div>
+        <div class="form-group"><label>Dealer</label><input type="text" id="specDealer" placeholder="Dealer name" oninput="saveSpecs()"></div>
+        <div class="form-group"><label>Purchase Date</label><input type="date" id="specPurchaseDate" onchange="saveSpecs()"></div>
+        <div class="form-group"><label>Warranty Expiry</label><input type="date" id="specWarranty" onchange="saveSpecs()"></div>
+        <div class="form-group full"><label>Notes</label><textarea id="specNotes" placeholder="Boat name, hull ID, rigging notes..." oninput="saveSpecs()" style="min-height:48px;"></textarea></div>
       </div>
-      <div style="margin-top:20px;display:flex;gap:10px;">
-        <button class="btn btn-primary" onclick="saveEntry()">💾 SAVE ENTRY</button>
-        <button class="btn btn-secondary" onclick="clearForm()">CLEAR</button>
-      </div>
+      <span id="specsSaved" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);display:none;margin-top:8px;">✓ Saved</span>
     </div>
   </div>
-
-  <!-- HISTORY -->
-  <div class="section" id="section-history">
-    <div class="section-header">
-      <div class="section-title">Service History</div>
-      <button class="btn btn-secondary" onclick="exportLog()">⬇ EXPORT CSV</button>
-    </div>
-    <div id="historyList"></div>
-  </div>
-
-  <!-- SCHEDULE -->
-  <div class="section" id="section-schedule">
-    <div class="section-header">
-      <div class="section-title">Maintenance Schedule</div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">Break-In Period — First 10 Hours</div>
-      <table class="schedule-table">
-        <thead><tr><th>Phase</th><th>Duration</th><th>RPM Limit</th><th>Instructions</th></tr></thead>
-        <tbody>
-          <tr><td>Warm-Up</td><td>5 min</td><td>Idle</td><td>Cold start — idle in neutral</td></tr>
-          <tr><td>Phase 1</td><td>15 min</td><td>Idle in gear</td><td>Lowest in-gear speed</td></tr>
-          <tr><td>Phase 2</td><td>1 hr 45 min</td><td>&lt; 3,000 RPM</td><td>Under ½ throttle only</td></tr>
-          <tr><td>Phase 3</td><td>Hour 3</td><td>~4,000 RPM</td><td>¾ throttle max, no WOT</td></tr>
-          <tr><td>Phase 4</td><td>Hours 4–10</td><td>Any — with limits</td><td>WOT max 5 min continuous</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Periodic Maintenance Chart</div>
-      <table class="schedule-table">
-        <thead>
-          <tr>
-            <th>Service Item</th>
-            <th>Interval</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Spark Plugs</td><td><span class="tag tag-50">50hr / 3mo</span></td><td>Inspect, clean, gap</td></tr>
-          <tr><td>Spark Plugs</td><td><span class="tag tag-200">200hr / 12mo</span></td><td>Replace</td></tr>
-          <tr><td>Engine Oil & Filter</td><td><span class="tag tag-100">100hr / 6mo</span></td><td>Replace</td></tr>
-          <tr><td>Gear Oil</td><td><span class="tag tag-100">100hr / 6mo</span></td><td>Replace</td></tr>
-          <tr><td>Breather Hose & Fuel Line</td><td><span class="tag tag-50">50hr / 3mo</span></td><td>Inspect</td></tr>
-          <tr><td>Fuel Lines</td><td><span class="tag tag-special">Every 2 Years</span></td><td>Replace</td></tr>
-          <tr><td>Water-Separating Fuel Filter</td><td><span class="tag tag-200">Annual / 12mo</span></td><td>Replace element</td></tr>
-          <tr><td>Lubrication / Grease Fittings</td><td><span class="tag tag-50">50hr / 3mo</span></td><td>Grease all fittings</td></tr>
-          <tr><td>Anodes & Bonding Wires</td><td><span class="tag tag-50">50hr / 3mo</span></td><td>Inspect, replace if &gt;50% depleted</td></tr>
-          <tr><td>Battery</td><td><span class="tag tag-50">50hr / 3mo</span></td><td>Inspect terminals, test charge</td></tr>
-          <tr><td>O2 Feedback / Fuel Mixture</td><td><span class="tag tag-special">Every 2 Years</span></td><td>Dealer check</td></tr>
-          <tr><td>Transom Hardware</td><td><span class="tag tag-special">Post Break-In</span></td><td>Retorque to spec after 10hrs</td></tr>
-          <tr><td>Propeller</td><td><span class="tag tag-50">50hr / 3mo</span></td><td>Inspect blades, hub, nut</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- SPECS -->
-  <div class="section" id="section-specs">
-    <div class="section-header">
-      <div class="section-title">Engine Specifications</div>
-    </div>
-
-    <div class="specs-grid">
-
-      <div class="card">
-        <div class="card-title">⚙ Core Engine</div>
-        <table class="schedule-table">
-          <tbody>
-            <tr><td style="color:var(--text-dim);width:50%">Type</td><td>4-Stroke DOHC 16-Valve</td></tr>
-            <tr><td style="color:var(--text-dim)">Cylinders</td><td>4 (In-Line)</td></tr>
-            <tr><td style="color:var(--text-dim)">Displacement</td><td>2,044 cm³ (124.6 cu in)</td></tr>
-            <tr><td style="color:var(--text-dim)">Bore</td><td>86.0 mm (3.39 in)</td></tr>
-            <tr><td style="color:var(--text-dim)">Stroke</td><td>88.0 mm (3.46 in)</td></tr>
-            <tr><td style="color:var(--text-dim)">Compression Ratio</td><td>9.7:1 (DF140A) / 10.6:1 (DF140B)</td></tr>
-            <tr><td style="color:var(--text-dim)">WOT RPM Range</td><td>5,600 – 6,200 RPM</td></tr>
-            <tr><td style="color:var(--text-dim)">Horsepower</td><td>140 HP</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-title">⚡ Fuel & Ignition</div>
-        <table class="schedule-table">
-          <tbody>
-            <tr><td style="color:var(--text-dim);width:50%">Fuel System</td><td>Multipoint EFI (Electronic Fuel Injection)</td></tr>
-            <tr><td style="color:var(--text-dim)">Fuel Type</td><td>Unleaded, min 91 Octane (RON)</td></tr>
-            <tr><td style="color:var(--text-dim)">Ignition</td><td>Full Transistorized / Solid State Electronic</td></tr>
-            <tr><td style="color:var(--text-dim)">Spark Plug</td><td>NGK BKR6E</td></tr>
-            <tr><td style="color:var(--text-dim)">Lubrication</td><td>Wet Sump</td></tr>
-            <tr><td style="color:var(--text-dim)">Oil Capacity</td><td>5.8 qt / 5.5 L</td></tr>
-            <tr><td style="color:var(--text-dim)">Recommended Oil</td><td>10W-40 API SE–SJ 4-Stroke</td></tr>
-            <tr><td style="color:var(--text-dim)">Lean Burn Control</td><td>Yes (DF140A/B)</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🔩 Drivetrain & Electrical</div>
-        <table class="schedule-table">
-          <tbody>
-            <tr><td style="color:var(--text-dim);width:50%">Gear Ratio</td><td>2.59:1</td></tr>
-            <tr><td style="color:var(--text-dim)">Drive System</td><td>2-Stage Reduction / Offset Driveshaft</td></tr>
-            <tr><td style="color:var(--text-dim)">Gear Shift</td><td>F-N-R</td></tr>
-            <tr><td style="color:var(--text-dim)">Trim Type</td><td>Power Trim & Tilt</td></tr>
-            <tr><td style="color:var(--text-dim)">Alternator</td><td>12V 40A</td></tr>
-            <tr><td style="color:var(--text-dim)">Starting</td><td>Electric</td></tr>
-            <tr><td style="color:var(--text-dim)">Counter Rotation</td><td>Available</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-title">📐 Physical</div>
-        <table class="schedule-table">
-          <tbody>
-            <tr><td style="color:var(--text-dim);width:50%">Weight (Long Shaft)</td><td>410 lbs / 186 kg</td></tr>
-            <tr><td style="color:var(--text-dim)">Transom (L shaft)</td><td>508–511 mm (20 in)</td></tr>
-            <tr><td style="color:var(--text-dim)">Transom (X shaft)</td><td>635–638 mm (25 in)</td></tr>
-            <tr><td style="color:var(--text-dim)">Prop Pitch Range</td><td>15–28 in</td></tr>
-            <tr><td style="color:var(--text-dim)">Emissions Rating</td><td>CARB 3-Star Ultra Low</td></tr>
-            <tr><td style="color:var(--text-dim)">0–30 mph</td><td>~8.4 sec</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card" style="grid-column:1/-1;">
-        <div class="card-title">🛠 Your Motor — Serial & Registration</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Model / Variant</label>
-            <input type="text" id="specModel" placeholder="e.g. DF140BTLW" oninput="saveSpecs()">
-          </div>
-          <div class="form-group">
-            <label>Serial Number</label>
-            <input type="text" id="specSerial" placeholder="Found on mounting bracket" oninput="saveSpecs()">
-          </div>
-          <div class="form-group">
-            <label>Year of Manufacture</label>
-            <input type="text" id="specYear" placeholder="e.g. 2023" oninput="saveSpecs()">
-          </div>
-          <div class="form-group">
-            <label>Shaft Length</label>
-            <select id="specShaft" onchange="saveSpecs()">
-              <option value="">— Select —</option>
-              <option>L (20 in)</option>
-              <option>X (25 in)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Propeller Installed</label>
-            <input type="text" id="specProp" placeholder="e.g. 3-blade SS 19p" oninput="saveSpecs()">
-          </div>
-          <div class="form-group">
-            <label>Dealer / Purchased From</label>
-            <input type="text" id="specDealer" placeholder="Dealer name" oninput="saveSpecs()">
-          </div>
-          <div class="form-group">
-            <label>Purchase Date</label>
-            <input type="date" id="specPurchaseDate" onchange="saveSpecs()">
-          </div>
-          <div class="form-group">
-            <label>Warranty Expiry</label>
-            <input type="date" id="specWarranty" onchange="saveSpecs()">
-          </div>
-          <div class="form-group full">
-            <label>Additional Notes</label>
-            <textarea id="specNotes" placeholder="Boat name, hull ID, rigging notes..." oninput="saveSpecs()" style="min-height:56px;"></textarea>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <span id="specsSaved" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);display:none;">✓ Saved</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- TIDES -->
-  <div class="section" id="section-tides">
-    <div class="section-header">
-      <div class="section-title">Tides — Bristol, PA</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);">Tides: NOAA Edgely PA (8549424) · Temp: NOAA Burlington NJ (8539094)</div>
-    </div>
-
-    <!-- Current Tide Status -->
-    <div class="stats-grid" style="margin-bottom:16px;">
-      <div class="stat-card" id="tideCurrentCard">
-        <div class="stat-value" id="tideCurrentHeight">--</div>
-        <div class="stat-label">Current Water Level (ft)</div>
-        <div id="tideCurrentTrend" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;">Loading...</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="tideNextHigh">--</div>
-        <div class="stat-label">Next High Tide</div>
-        <div id="tideNextHighHeight" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="tideNextLow">--</div>
-        <div class="stat-label">Next Low Tide</div>
-        <div id="tideNextLowHeight" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="waterTempDisplay">--</div>
-        <div class="stat-label">Water Temp °F</div>
-        <div id="waterTempSub" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:6px;">Burlington, NJ · Delaware R.</div>
-      </div>
-    </div>
-
-    <!-- 7-Day Hi/Lo Table -->
-    <div class="card">
-      <div class="card-title">📅 7-Day High / Low Predictions</div>
-      <div id="tideTable">
-        <div style="text-align:center;padding:24px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">Loading predictions...</div>
-      </div>
-    </div>
-  </div>
-
 </div>
+
+</div><!-- end main -->
 
 <!-- HOURS MODAL -->
 <div class="modal-overlay" id="hoursModal">
   <div class="modal">
     <div class="modal-title">Update Engine Hours</div>
-    <div class="form-group">
-      <label>Current Engine Hours</label>
-      <input type="number" id="hoursInput" placeholder="e.g. 47.5" step="0.1" min="0">
-    </div>
+    <div class="form-group"><label>Current Engine Hours</label><input type="number" id="hoursInput" placeholder="e.g. 47.5" step="0.1" min="0"></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeHoursModal()">CANCEL</button>
       <button class="btn btn-primary" onclick="saveHours()">SAVE</button>
@@ -873,466 +503,409 @@
 </div>
 
 <script>
-  // ---- STATE ----
-  let state = {
-    hours: 0,
-    entries: []
-  };
+// ---- STATE ----
+let state = { hours:0, entries:[], fuel:[], trips:[], parts:[], marinas:[], specs:{} };
 
-  // Persist to localStorage
-  function loadState() {
-    try {
-      const saved = localStorage.getItem('df140_state');
-      if (saved) state = JSON.parse(saved);
-    } catch(e) {}
-  }
-  function saveState() {
-    localStorage.setItem('df140_state', JSON.stringify(state));
-  }
+function loadState() {
+  try { const s = localStorage.getItem('df140_state'); if(s) state = {...state, ...JSON.parse(s)}; } catch(e){}
+}
+function saveState() { localStorage.setItem('df140_state', JSON.stringify(state)); }
 
-  // ---- TABS ----
-  function switchTab(tab) {
-    document.querySelectorAll('.nav-tab').forEach((t,i) => {
-      const tabs = ['dashboard','log','history','schedule','specs','tides'];
-      t.classList.toggle('active', tabs[i] === tab);
-    });
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('section-' + tab).classList.add('active');
-    if (tab === 'dashboard') renderDashboard();
-    if (tab === 'history') renderHistory();
-    if (tab === 'specs') loadSpecsForm();
-    if (tab === 'tides') loadTides();
-  }
+// ---- THEME ----
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀️';
+  localStorage.setItem('df140_theme', isLight ? 'light' : 'dark');
+}
+function loadTheme() {
+  const t = localStorage.getItem('df140_theme');
+  if(t==='light') { document.body.classList.add('light'); document.getElementById('themeBtn').textContent='🌙'; }
+  else { document.getElementById('themeBtn').textContent='☀️'; }
+}
 
-  // ---- HOURS MODAL ----
-  function openHoursModal() {
-    document.getElementById('hoursInput').value = state.hours;
-    document.getElementById('hoursModal').classList.add('open');
-  }
-  function closeHoursModal() {
-    document.getElementById('hoursModal').classList.remove('open');
-  }
-  function saveHours() {
-    const val = parseFloat(document.getElementById('hoursInput').value);
-    if (!isNaN(val) && val >= 0) {
-      state.hours = val;
-      saveState();
-      updateHoursDisplay();
-      renderDashboard();
-    }
-    closeHoursModal();
-  }
-  function updateHoursDisplay() {
-    document.getElementById('hoursDisplay').textContent = state.hours.toFixed(1);
-  }
+// ---- TABS & SWIPE ----
+const TAB_ORDER = ['tides','dashboard','fuel','trips','log','history','parts','schedule','specs'];
+let currentTabIndex = 0;
 
-  // ---- FILE UPLOAD ----
-  let pendingFiles = [];
-  function handleFileUpload(e) {
-    const files = Array.from(e.target.files);
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        pendingFiles.push({ name: file.name, data: ev.target.result, type: file.type });
-        renderUploadPreview();
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-  function renderUploadPreview() {
-    const el = document.getElementById('uploadPreview');
-    el.innerHTML = pendingFiles.map((f,i) => `
-      <div class="receipt-chip" onclick="removeFile(${i})">
-        ${f.type.includes('pdf') ? '📄' : '🖼'} ${f.name} <span style="color:var(--warn)">✕</span>
+function switchTab(tab) {
+  currentTabIndex = TAB_ORDER.indexOf(tab);
+  document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', TAB_ORDER[i]===tab));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-'+tab).classList.add('active');
+  setTimeout(() => document.querySelectorAll('.nav-tab')[currentTabIndex]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}), 300);
+  if(tab==='tides') loadTides();
+  if(tab==='dashboard') renderDashboard();
+  if(tab==='history') renderHistory();
+  if(tab==='specs') loadSpecsForm();
+  if(tab==='fuel') renderFuel();
+  if(tab==='trips') renderTrips();
+  if(tab==='parts') renderParts();
+}
+
+// Swipe
+let swipeStartX=0, swipeStartY=0, swipeLocked=false;
+document.addEventListener('touchstart', e=>{ swipeStartX=e.touches[0].clientX; swipeStartY=e.touches[0].clientY; swipeLocked=false; }, {passive:true});
+document.addEventListener('touchmove', e=>{ if(swipeLocked) return; const dx=e.touches[0].clientX-swipeStartX, dy=e.touches[0].clientY-swipeStartY; if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>10) swipeLocked=true; }, {passive:true});
+document.addEventListener('touchend', e=>{ if(swipeLocked) return; const dx=e.changedTouches[0].clientX-swipeStartX, dy=e.changedTouches[0].clientY-swipeStartY; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*2){ if(dx<0&&currentTabIndex<TAB_ORDER.length-1) switchTab(TAB_ORDER[currentTabIndex+1]); else if(dx>0&&currentTabIndex>0) switchTab(TAB_ORDER[currentTabIndex-1]); } }, {passive:true});
+
+// ---- HOURS ----
+function openHoursModal(){ document.getElementById('hoursInput').value=state.hours; document.getElementById('hoursModal').classList.add('open'); }
+function closeHoursModal(){ document.getElementById('hoursModal').classList.remove('open'); }
+function saveHours(){ const v=parseFloat(document.getElementById('hoursInput').value); if(!isNaN(v)&&v>=0){ state.hours=v; saveState(); updateHoursDisplay(); renderDashboard(); } closeHoursModal(); }
+function updateHoursDisplay(){ document.getElementById('hoursDisplay').textContent=state.hours.toFixed(1); }
+document.getElementById('hoursModal').addEventListener('click', function(e){ if(e.target===this) closeHoursModal(); });
+
+// ---- FILE UPLOAD ----
+let pendingFiles=[];
+function handleFileUpload(e){ Array.from(e.target.files).forEach(file=>{ const r=new FileReader(); r.onload=ev=>{ pendingFiles.push({name:file.name,data:ev.target.result,type:file.type}); renderUploadPreview(); }; r.readAsDataURL(file); }); }
+function renderUploadPreview(){ document.getElementById('uploadPreview').innerHTML=pendingFiles.map((f,i)=>`<div class="receipt-chip" onclick="removeFile(${i})">${f.type.includes('pdf')?'📄':'🖼'} ${f.name} <span style="color:var(--warn)">✕</span></div>`).join(''); }
+function removeFile(i){ pendingFiles.splice(i,1); renderUploadPreview(); }
+
+// ---- SERVICE LOG ----
+function saveEntry(){
+  const type=document.getElementById('logType').value, desc=document.getElementById('logDesc').value.trim();
+  const hours=document.getElementById('logHours').value, date=document.getElementById('logDate').value;
+  const notes=document.getElementById('logNotes').value.trim(), cost=document.getElementById('logCost').value;
+  const tech=document.getElementById('logTech').value.trim();
+  if(!date){alert('Please enter a date.');return;}
+  if(!type&&!desc){alert('Please select or enter a service type.');return;}
+  const entry={id:Date.now(),date,type:desc||type,hours:hours?parseFloat(hours):null,notes,cost:cost?parseFloat(cost):null,tech,receipts:[...pendingFiles]};
+  state.entries.unshift(entry);
+  if(entry.hours&&entry.hours>state.hours){ state.hours=entry.hours; updateHoursDisplay(); }
+  saveState(); clearForm(); switchTab('history');
+}
+function clearForm(){
+  ['logDate','logHours','logDesc','logNotes','logCost','logTech'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('logType').value=''; pendingFiles=[]; renderUploadPreview();
+  document.getElementById('logDate').value=new Date().toISOString().split('T')[0];
+}
+
+// ---- HISTORY ----
+function renderHistory(){
+  const el=document.getElementById('historyList');
+  if(!state.entries.length){ el.innerHTML=`<div class="empty-state"><div class="icon">🔧</div><p>No service entries yet.</p></div>`; return; }
+  el.innerHTML=state.entries.map(e=>`
+    <div class="log-entry">
+      <div class="entry-date"><span class="day">${new Date(e.date+'T12:00:00').getDate()}</span>${new Date(e.date+'T12:00:00').toLocaleString('default',{month:'short'}).toUpperCase()}<br>${new Date(e.date+'T12:00:00').getFullYear()}</div>
+      <div>
+        <div class="entry-type">${e.type}</div>
+        ${e.hours!==null?`<div class="entry-badge">@ ${e.hours} HRS</div>`:''}
+        ${e.notes?`<div class="entry-notes">${e.notes}</div>`:''}
+        ${e.tech?`<div class="entry-notes" style="margin-top:3px;font-size:11px;">👤 ${e.tech}</div>`:''}
+        ${e.cost!==null?`<div class="entry-notes" style="margin-top:3px;font-size:11px;color:var(--accent2);">💰 $${e.cost.toFixed(2)}</div>`:''}
+        ${e.receipts&&e.receipts.length?e.receipts.map(r=>`<a class="receipt-chip" href="${r.data}" download="${r.name}">${r.type&&r.type.includes('pdf')?'📄':'🖼'} ${r.name}</a>`).join(''):''}
       </div>
-    `).join('');
-  }
-  function removeFile(i) {
-    pendingFiles.splice(i, 1);
-    renderUploadPreview();
-  }
+      <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})">DEL</button>
+    </div>`).join('');
+}
+function deleteEntry(id){ if(!confirm('Delete this entry?')) return; state.entries=state.entries.filter(e=>e.id!==id); saveState(); renderHistory(); }
+function exportLog(){
+  if(!state.entries.length){alert('No entries to export.');return;}
+  const csv=[['Date','Type','Hours','Cost','Tech','Notes'],...state.entries.map(e=>[e.date,`"${e.type}"`,e.hours??'',e.cost??'',`"${e.tech}"`,`"${e.notes}"`])].map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='df140_service_log.csv'; a.click();
+}
 
-  // ---- SAVE ENTRY ----
-  function saveEntry() {
-    const type = document.getElementById('logType').value;
-    const desc = document.getElementById('logDesc').value.trim();
-    const hours = document.getElementById('logHours').value;
-    const date = document.getElementById('logDate').value;
-    const notes = document.getElementById('logNotes').value.trim();
-    const cost = document.getElementById('logCost').value;
-    const tech = document.getElementById('logTech').value.trim();
+// ---- FUEL LOG ----
+function saveFuel(){
+  const date=document.getElementById('fuelDate').value;
+  if(!date){alert('Please enter a date.');return;}
+  const gals=parseFloat(document.getElementById('fuelGallons').value)||0;
+  const ppg=parseFloat(document.getElementById('fuelPpg').value)||0;
+  const cost=parseFloat(document.getElementById('fuelCost').value)||(gals*ppg)||0;
+  const entry={id:Date.now(),date,hours:parseFloat(document.getElementById('fuelHours').value)||null,gallons:gals,ppg,cost,location:document.getElementById('fuelLocation').value.trim(),notes:document.getElementById('fuelNotes').value.trim()};
+  state.fuel.unshift(entry); saveState(); clearFuelForm(); renderFuel();
+}
+function clearFuelForm(){['fuelDate','fuelHours','fuelGallons','fuelPpg','fuelCost','fuelLocation','fuelNotes'].forEach(id=>document.getElementById(id).value=''); document.getElementById('fuelDate').value=new Date().toISOString().split('T')[0];}
+function renderFuel(){
+  const totalGals=state.fuel.reduce((s,e)=>s+e.gallons,0);
+  const totalCost=state.fuel.reduce((s,e)=>s+e.cost,0);
+  const avgPpg=state.fuel.length?state.fuel.reduce((s,e)=>s+(e.ppg||0),0)/state.fuel.filter(e=>e.ppg).length:0;
+  document.getElementById('fuelStats').innerHTML=`
+    <div class="stat-card"><div class="stat-value">${totalGals.toFixed(0)}</div><div class="stat-label">Total Gallons</div></div>
+    <div class="stat-card"><div class="stat-value">$${totalCost.toFixed(0)}</div><div class="stat-label">Total Fuel Cost</div></div>
+    <div class="stat-card"><div class="stat-value">${avgPpg?'$'+avgPpg.toFixed(2):'--'}</div><div class="stat-label">Avg $/Gal</div></div>
+    <div class="stat-card"><div class="stat-value">${state.fuel.length}</div><div class="stat-label">Fill-Ups</div></div>`;
+  const el=document.getElementById('fuelHistory');
+  if(!state.fuel.length){el.innerHTML=`<div class="empty-state"><div class="icon">⛽</div><p>No fuel entries yet.</p></div>`;return;}
+  el.innerHTML=state.fuel.map(e=>`
+    <div class="log-entry">
+      <div class="entry-date"><span class="day">${new Date(e.date+'T12:00:00').getDate()}</span>${new Date(e.date+'T12:00:00').toLocaleString('default',{month:'short'}).toUpperCase()}<br>${new Date(e.date+'T12:00:00').getFullYear()}</div>
+      <div>
+        <div class="entry-type">⛽ ${e.gallons.toFixed(1)} Gallons${e.location?' — '+e.location:''}</div>
+        ${e.hours?`<div class="entry-badge">@ ${e.hours} HRS</div>`:''}
+        <div class="entry-notes" style="color:var(--accent2)">$${e.cost.toFixed(2)} total${e.ppg?' · $'+e.ppg.toFixed(2)+'/gal':''}</div>
+        ${e.notes?`<div class="entry-notes">${e.notes}</div>`:''}
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deleteFuel(${e.id})">DEL</button>
+    </div>`).join('');
+}
+function deleteFuel(id){if(!confirm('Delete?'))return;state.fuel=state.fuel.filter(e=>e.id!==id);saveState();renderFuel();}
 
-    if (!date) { alert('Please enter a date.'); return; }
-    if (!type && !desc) { alert('Please select or enter a service type.'); return; }
+// ---- TRIP LOG ----
+function saveTrip(){
+  const date=document.getElementById('tripDate').value;
+  if(!date){alert('Please enter a date.');return;}
+  const hrsStart=parseFloat(document.getElementById('tripHrsStart').value)||null;
+  const hrsEnd=parseFloat(document.getElementById('tripHrsEnd').value)||null;
+  const entry={id:Date.now(),date,hrsStart,hrsEnd,hoursRun:(hrsStart&&hrsEnd)?+(hrsEnd-hrsStart).toFixed(1):null,from:document.getElementById('tripFrom').value.trim(),to:document.getElementById('tripTo').value.trim(),crew:parseInt(document.getElementById('tripCrew').value)||null,notes:document.getElementById('tripNotes').value.trim()};
+  state.trips.unshift(entry); saveState(); clearTripForm(); renderTrips();
+}
+function clearTripForm(){['tripDate','tripHrsStart','tripHrsEnd','tripFrom','tripTo','tripCrew','tripNotes'].forEach(id=>document.getElementById(id).value=''); document.getElementById('tripDate').value=new Date().toISOString().split('T')[0];}
+function renderTrips(){
+  const totalHrs=state.trips.reduce((s,e)=>s+(e.hoursRun||0),0);
+  const totalTrips=state.trips.length;
+  document.getElementById('tripStats').innerHTML=`
+    <div class="stat-card"><div class="stat-value">${totalTrips}</div><div class="stat-label">Total Trips</div></div>
+    <div class="stat-card"><div class="stat-value">${totalHrs.toFixed(1)}</div><div class="stat-label">Hours on Water</div></div>`;
+  const el=document.getElementById('tripHistory');
+  if(!state.trips.length){el.innerHTML=`<div class="empty-state"><div class="icon">🗺</div><p>No trips logged yet.</p></div>`;return;}
+  el.innerHTML=state.trips.map(e=>`
+    <div class="log-entry">
+      <div class="entry-date"><span class="day">${new Date(e.date+'T12:00:00').getDate()}</span>${new Date(e.date+'T12:00:00').toLocaleString('default',{month:'short'}).toUpperCase()}<br>${new Date(e.date+'T12:00:00').getFullYear()}</div>
+      <div>
+        <div class="entry-type">${e.from&&e.to?e.from+' → '+e.to:e.from||e.to||'Trip'}</div>
+        ${e.hoursRun?`<div class="entry-badge">${e.hoursRun} HRS RUN</div>`:''}
+        ${e.crew?`<div class="entry-notes">👥 ${e.crew} aboard</div>`:''}
+        ${e.notes?`<div class="entry-notes">${e.notes}</div>`:''}
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deleteTrip(${e.id})">DEL</button>
+    </div>`).join('');
+}
+function deleteTrip(id){if(!confirm('Delete?'))return;state.trips=state.trips.filter(e=>e.id!==id);saveState();renderTrips();}
 
-    const entry = {
-      id: Date.now(),
-      date,
-      type: desc || type,
-      hours: hours ? parseFloat(hours) : null,
-      notes,
-      cost: cost ? parseFloat(cost) : null,
-      tech,
-      receipts: [...pendingFiles]
-    };
-
-    state.entries.unshift(entry);
-    if (entry.hours && entry.hours > state.hours) {
-      state.hours = entry.hours;
-      updateHoursDisplay();
-    }
-    saveState();
-    clearForm();
-    switchTab('history');
-  }
-
-  function clearForm() {
-    ['logDate','logHours','logDesc','logNotes','logCost','logTech'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('logType').value = '';
-    pendingFiles = [];
-    renderUploadPreview();
-    // Set today
-    document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
-  }
-
-  // ---- HISTORY ----
-  function renderHistory() {
-    const el = document.getElementById('historyList');
-    if (!state.entries.length) {
-      el.innerHTML = `<div class="empty-state"><div class="icon">🔧</div><p>No service entries yet.<br>Log your first service to get started.</p></div>`;
-      return;
-    }
-    el.innerHTML = state.entries.map(e => `
-      <div class="log-entry">
-        <div class="entry-date">
-          <span class="day">${new Date(e.date + 'T12:00:00').getDate()}</span>
-          ${new Date(e.date + 'T12:00:00').toLocaleString('default',{month:'short'}).toUpperCase()}<br>
-          ${new Date(e.date + 'T12:00:00').getFullYear()}
+// ---- PARTS INVENTORY ----
+function savePart(){
+  const name=document.getElementById('partName').value.trim();
+  if(!name){alert('Please enter a part name.');return;}
+  const part={id:Date.now(),name,number:document.getElementById('partNumber').value.trim(),qty:parseInt(document.getElementById('partQty').value)||0,min:parseInt(document.getElementById('partMin').value)||1,notes:document.getElementById('partNotes').value.trim()};
+  state.parts.push(part); saveState();
+  ['partName','partNumber','partQty','partMin','partNotes'].forEach(id=>document.getElementById(id).value='');
+  renderParts();
+}
+function updatePartQty(id,delta){
+  const p=state.parts.find(p=>p.id===id); if(!p) return;
+  p.qty=Math.max(0,p.qty+delta); saveState(); renderParts();
+}
+function deletePart(id){if(!confirm('Delete?'))return;state.parts=state.parts.filter(p=>p.id!==id);saveState();renderParts();}
+function renderParts(){
+  const el=document.getElementById('partsList');
+  if(!state.parts.length){el.innerHTML=`<div class="empty-state"><div class="icon">🔧</div><p>No parts added yet.<br>Track spare parts on board.</p></div>`;return;}
+  el.innerHTML=state.parts.map(p=>{
+    const low=p.qty<=p.min; const out=p.qty===0;
+    return `<div class="card" style="margin-bottom:10px;border-left:3px solid ${out?'var(--warn)':low?'var(--accent2)':'var(--green)'};">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--text-bright);">${p.name}</div>
+          ${p.number?`<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">P/N: ${p.number}</div>`:''}
+          ${p.notes?`<div style="font-size:12px;color:var(--text-dim);margin-top:2px;">${p.notes}</div>`:''}
+          ${out?`<div style="font-size:11px;color:var(--warn);font-weight:600;margin-top:3px;">⚠ OUT OF STOCK</div>`:low?`<div style="font-size:11px;color:var(--accent2);margin-top:3px;">⚠ Low stock</div>`:''}
         </div>
-        <div class="entry-body">
-          <div class="entry-type">${e.type}</div>
-          ${e.hours !== null ? `<div class="entry-hours-badge">@ ${e.hours} HRS</div>` : ''}
-          ${e.notes ? `<div class="entry-notes">${e.notes}</div>` : ''}
-          ${e.tech ? `<div class="entry-notes" style="margin-top:4px;font-size:11px;">👤 ${e.tech}</div>` : ''}
-          ${e.cost !== null ? `<div class="entry-notes" style="margin-top:4px;font-size:11px;color:var(--accent2);">💰 $${e.cost.toFixed(2)}</div>` : ''}
-          ${e.receipts && e.receipts.length ? `
-            <div class="entry-receipts">
-              ${e.receipts.map((r,i) => `
-                <a class="receipt-chip" href="${r.data}" download="${r.name}" title="Download ${r.name}">
-                  ${r.type && r.type.includes('pdf') ? '📄' : '🖼'} ${r.name}
-                </a>
-              `).join('')}
-            </div>` : ''}
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="updatePartQty(${p.id},-1)">−</button>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:${out?'var(--warn)':low?'var(--accent2)':'var(--accent)'};min-width:28px;text-align:center;">${p.qty}</span>
+          <button class="btn btn-secondary btn-sm" onclick="updatePartQty(${p.id},1)">+</button>
         </div>
-        <button class="btn btn-danger" style="padding:6px 10px;font-size:11px;" onclick="deleteEntry(${e.id})">DELETE</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePart(${p.id})">DEL</button>
       </div>
-    `).join('');
-  }
+    </div>`;}).join('');
+}
 
-  function deleteEntry(id) {
-    if (!confirm('Delete this entry?')) return;
-    state.entries = state.entries.filter(e => e.id !== id);
-    saveState();
-    renderHistory();
-    renderDashboard();
-  }
+// ---- DASHBOARD ----
+const SCHEDULE=[
+  {name:'Engine Oil & Filter',interval:100},{name:'Gear Oil',interval:100},
+  {name:'Spark Plug Inspect',interval:50},{name:'Grease Fittings',interval:50},
+  {name:'Anodes & Bonding Wires',interval:50},{name:'Spark Plug Replace',interval:200},
+  {name:'Propeller Inspect',interval:50},
+];
+function renderDashboard(){
+  const hrs=state.hours;
+  const totalCost=state.entries.reduce((s,e)=>s+(e.cost||0),0);
+  const totalFuelCost=state.fuel.reduce((s,e)=>s+(e.cost||0),0);
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-value">${hrs.toFixed(0)}</div><div class="stat-label">Engine Hours</div><div class="progress-bar"><div class="progress-fill" style="width:${hrs%100}%;background:var(--accent)"></div></div></div>
+    <div class="stat-card"><div class="stat-value">${state.entries.length}</div><div class="stat-label">Service Entries</div></div>
+    <div class="stat-card"><div class="stat-value">${state.trips.length}</div><div class="stat-label">Trips Logged</div></div>
+    <div class="stat-card"><div class="stat-value">$${(totalCost+totalFuelCost).toFixed(0)}</div><div class="stat-label">Total Cost Logged</div></div>`;
+  const reminders=SCHEDULE.map(item=>{
+    const last=state.entries.find(e=>e.type&&e.type.toLowerCase().includes(item.name.toLowerCase().split(' ')[0]));
+    const lastHrs=last&&last.hours!==null?last.hours:0;
+    const dueAt=lastHrs+item.interval, remaining=dueAt-hrs;
+    let status='green'; if(remaining<=0) status='red'; else if(remaining<=item.interval*.2) status='yellow';
+    return {...item,dueAt,remaining,status};
+  }).sort((a,b)=>a.remaining-b.remaining);
+  document.getElementById('remindersList').innerHTML=reminders.map(r=>`
+    <div class="reminder-item"><div class="dot dot-${r.status}"></div><div class="reminder-name">${r.name}</div>
+    <div class="reminder-due">${r.remaining<=0?`<span style="color:var(--warn)">OVERDUE ${Math.abs(r.remaining).toFixed(0)}hrs</span>`:`Due@${r.dueAt.toFixed(0)}hrs`}</div></div>`).join('');
+  const overdueCount=reminders.filter(r=>r.remaining<=0).length;
+  const dashTab=document.querySelectorAll('.nav-tab')[1];
+  if(dashTab) dashTab.innerHTML='Dashboard'+(overdueCount?`<span class="nav-badge">${overdueCount}</span>`:'');
+  const recentEl=document.getElementById('recentEntries');
+  const recent=[...state.entries.slice(0,2).map(e=>({date:e.date,label:e.type,sub:e.hours?e.hours+'hrs':'',icon:'🔧'})),...state.trips.slice(0,2).map(t=>({date:t.date,label:t.from&&t.to?t.from+' → '+t.to:'Trip',sub:t.hoursRun?t.hoursRun+'hrs run':'',icon:'🗺'})),...state.fuel.slice(0,2).map(f=>({date:f.date,label:`Fueled ${f.gallons.toFixed(1)}gal`,sub:'$'+f.cost.toFixed(2),icon:'⛽'}))].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  recentEl.innerHTML=recent.length?recent.map(r=>`<div class="reminder-item"><div>${r.icon}</div><div class="reminder-name">${r.label}</div><div class="reminder-due">${r.date}${r.sub?' · '+r.sub:''}</div></div>`).join(''):`<div class="empty-state" style="padding:20px;"><p>No activity yet.</p></div>`;
+}
 
-  // ---- DASHBOARD ----
-  const SCHEDULE = [
-    { name: 'Engine Oil & Filter', interval: 100, unit: 'hrs' },
-    { name: 'Gear Oil', interval: 100, unit: 'hrs' },
-    { name: 'Spark Plug Inspect', interval: 50, unit: 'hrs' },
-    { name: 'Grease Fittings', interval: 50, unit: 'hrs' },
-    { name: 'Anodes & Bonding Wires', interval: 50, unit: 'hrs' },
-    { name: 'Spark Plug Replace', interval: 200, unit: 'hrs' },
-    { name: 'Propeller Inspect', interval: 50, unit: 'hrs' },
-  ];
-
-  function renderDashboard() {
-    const hrs = state.hours;
-    const totalCost = state.entries.reduce((s,e) => s + (e.cost || 0), 0);
-
-    // Stats
-    document.getElementById('statsGrid').innerHTML = `
-      <div class="stat-card">
-        <div class="stat-value">${hrs.toFixed(0)}</div>
-        <div class="stat-label">Engine Hours</div>
-        <div class="progress-wrap">
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:6px;">Next 100hr: ${100 - (hrs % 100)} hrs away</div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${(hrs%100)}%;background:var(--accent)"></div></div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${state.entries.length}</div>
-        <div class="stat-label">Service Entries</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">$${totalCost.toFixed(0)}</div>
-        <div class="stat-label">Total Logged Cost</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${state.entries.reduce((s,e) => s + (e.receipts ? e.receipts.length : 0), 0)}</div>
-        <div class="stat-label">Receipts Stored</div>
-      </div>
-    `;
-
-    // Reminders
-    const remindersEl = document.getElementById('remindersList');
-    const reminders = SCHEDULE.map(item => {
-      // Find last service of this type
-      const lastEntry = state.entries.find(e => e.type && e.type.toLowerCase().includes(item.name.toLowerCase().split(' ')[0]));
-      const lastHrs = lastEntry && lastEntry.hours !== null ? lastEntry.hours : 0;
-      const dueAt = lastHrs + item.interval;
-      const remaining = dueAt - hrs;
-      const pct = Math.max(0, Math.min(100, ((hrs - lastHrs) / item.interval) * 100));
-      let status = 'green';
-      if (remaining <= 0) status = 'red';
-      else if (remaining <= item.interval * 0.2) status = 'yellow';
-      return { ...item, dueAt, remaining, pct, status };
-    }).sort((a,b) => a.remaining - b.remaining);
-
-    remindersEl.innerHTML = reminders.map(r => `
-      <div class="reminder-item">
-        <div class="dot dot-${r.status}"></div>
-        <div class="reminder-name">${r.name}</div>
-        <div class="reminder-due">
-          ${r.remaining <= 0
-            ? `<span style="color:var(--warn)">OVERDUE by ${Math.abs(r.remaining).toFixed(0)} hrs</span>`
-            : `Due @ ${r.dueAt.toFixed(0)} hrs (${r.remaining.toFixed(0)} to go)`}
-        </div>
-      </div>
-    `).join('');
-
-    // Update badge count
-    const overdueCount = reminders.filter(r => r.remaining <= 0).length;
-    document.querySelectorAll('.nav-tab')[0].innerHTML = 'Dashboard' + (overdueCount ? `<span class="nav-badge">${overdueCount}</span>` : '');
-
-    // Recent entries
-    const recentEl = document.getElementById('recentEntries');
-    if (!state.entries.length) {
-      recentEl.innerHTML = `<div class="empty-state" style="padding:24px;"><div class="icon">📋</div><p>No entries yet. Log your first service.</p></div>`;
-    } else {
-      recentEl.innerHTML = state.entries.slice(0,3).map(e => `
-        <div class="reminder-item">
-          <div class="dot dot-green"></div>
-          <div class="reminder-name">${e.type}</div>
-          <div class="reminder-due">${e.date}${e.hours !== null ? ' · ' + e.hours + ' hrs' : ''}</div>
-        </div>
-      `).join('');
-    }
-  }
-
-  // ---- EXPORT ----
-  function exportLog() {
-    if (!state.entries.length) { alert('No entries to export.'); return; }
-    const headers = ['Date','Service Type','Engine Hours','Cost','Technician','Notes'];
-    const rows = state.entries.map(e => [
-      e.date, `"${e.type}"`, e.hours ?? '', e.cost ?? '', `"${e.tech}"`, `"${e.notes}"`
-    ]);
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'df140_maintenance_log.csv';
-    a.click();
-  }
-
-  // ---- SPECS ----
-  function saveSpecs() {
-    state.specs = {
-      model: document.getElementById('specModel').value,
-      serial: document.getElementById('specSerial').value,
-      year: document.getElementById('specYear').value,
-      shaft: document.getElementById('specShaft').value,
-      prop: document.getElementById('specProp').value,
-      dealer: document.getElementById('specDealer').value,
-      purchaseDate: document.getElementById('specPurchaseDate').value,
-      warranty: document.getElementById('specWarranty').value,
-      notes: document.getElementById('specNotes').value,
-    };
-    saveState();
-    const saved = document.getElementById('specsSaved');
-    saved.style.display = 'inline';
-    setTimeout(() => saved.style.display = 'none', 2000);
-  }
-  function loadSpecsForm() {
-    if (!state.specs) return;
-    const s = state.specs;
-    ['model','serial','year','shaft','prop','dealer','purchaseDate','warranty','notes'].forEach(k => {
-      const el = document.getElementById('spec' + k.charAt(0).toUpperCase() + k.slice(1));
-      if (el && s[k]) el.value = s[k];
-    });
-  }
-
-  // ---- TIDES ----
-  const TIDE_STATION = '8549424'; // Edgely, PA - closest to Bristol PA
-  const TEMP_STATION = '8539094'; // Burlington, NJ - has water temp sensor, across river from Bristol
-
-  function formatTideDate(d) {
-    return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
-  }
-  function formatTideTime(str) {
-    const parts = str.split(' ');
-    if (!parts[1]) return str;
-    const [h, m] = parts[1].split(':');
-    const hr = parseInt(h);
-    const ampm = hr >= 12 ? 'PM' : 'AM';
-    const hr12 = hr % 12 || 12;
-    return `${hr12}:${m} ${ampm}`;
-  }
-
-  async function loadTides() {
-    const now = new Date();
-    const pad = n => String(n).padStart(2,'0');
-    const todayStr = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
-    const sevenDaysLater = new Date(now);
-    sevenDaysLater.setDate(now.getDate() + 6);
-    const endStr = `${sevenDaysLater.getFullYear()}${pad(sevenDaysLater.getMonth()+1)}${pad(sevenDaysLater.getDate())}`;
-
-    // Hi/Lo predictions for 7 days (tide station)
-    const hiloUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${todayStr}&end_date=${endStr}&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=df140log&format=json`;
-
-    // Current water level observed (tide station)
-    const wlUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=${TIDE_STATION}&product=water_level&datum=MLLW&time_zone=lst_ldt&units=english&application=df140log&format=json`;
-
-    // Water temperature (Burlington NJ station - has temp sensor)
-    const tempUrl = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=${TEMP_STATION}&product=water_temperature&units=english&time_zone=lst_ldt&application=df140log&format=json`;
-
-    try {
-      const [hiloRes, wlRes, tempRes] = await Promise.all([
-        fetch(hiloUrl),
-        fetch(wlUrl),
-        fetch(tempUrl)
-      ]);
-
-      const hiloData = await hiloRes.json();
-      const wlData = await wlRes.json();
-      const tempData = await tempRes.json();
-
-      // Water level
-      if (wlData.data && wlData.data.length) {
-        const latest = wlData.data[wlData.data.length - 1];
-        const val = parseFloat(latest.v);
-        document.getElementById('tideCurrentHeight').textContent = val.toFixed(1);
-        // Compare to previous reading for trend
-        if (wlData.data.length > 1) {
-          const prev = parseFloat(wlData.data[wlData.data.length - 2].v);
-          const trend = val > prev ? '▲ Rising' : val < prev ? '▼ Falling' : '→ Steady';
-          const trendEl = document.getElementById('tideCurrentTrend');
-          trendEl.textContent = trend + ' · as of ' + formatTideTime(latest.t);
-          trendEl.style.color = val > prev ? '#3ddc84' : '#00b4d8';
-        }
-      } else {
-        document.getElementById('tideCurrentTrend').textContent = 'No live data';
-      }
-
-      // Water temperature
-      if (tempData.data && tempData.data.length) {
-        const tempVal = parseFloat(tempData.data[tempData.data.length - 1].v);
-        document.getElementById('waterTempDisplay').textContent = tempVal.toFixed(1) + '°';
-        document.getElementById('waterTempSub').textContent = 'Burlington, NJ · Delaware R. · ' + formatTideTime(tempData.data[tempData.data.length-1].t);
-      } else {
-        document.getElementById('waterTempDisplay').textContent = 'N/A';
-        document.getElementById('waterTempSub').textContent = 'Temp data unavailable';
-      }
-
-      // Hi/Lo predictions
-      if (hiloData.predictions) {
-        renderHiLoTable(hiloData.predictions);
-        renderNextTides(hiloData.predictions, now);
-      }
-
-    } catch(e) {
-      document.getElementById('tideCurrentTrend').textContent = 'Unable to load — check connection';
-      document.getElementById('waterTempDisplay').textContent = 'N/A';
-    }
-  }
-
-  function renderNextTides(predictions, now) {
-    const nowTime = now.getTime();
-    let nextHigh = null, nextLow = null;
-
-    for (const p of predictions) {
-      const [datePart, timePart] = p.t.split(' ');
-      const pDate = new Date(datePart + 'T' + timePart);
-      if (pDate.getTime() > nowTime) {
-        if (!nextHigh && p.type === 'H') nextHigh = p;
-        if (!nextLow && p.type === 'L') nextLow = p;
-        if (nextHigh && nextLow) break;
-      }
-    }
-
-    if (nextHigh) {
-      document.getElementById('tideNextHigh').textContent = formatTideTime(nextHigh.t);
-      document.getElementById('tideNextHighHeight').textContent = parseFloat(nextHigh.v).toFixed(2) + ' ft';
-    }
-    if (nextLow) {
-      document.getElementById('tideNextLow').textContent = formatTideTime(nextLow.t);
-      document.getElementById('tideNextLowHeight').textContent = parseFloat(nextLow.v).toFixed(2) + ' ft';
-    }
-  }
-
-  function renderHiLoTable(predictions) {
-    // Group by date
-    const byDay = {};
-    for (const p of predictions) {
-      const day = p.t.split(' ')[0];
-      if (!byDay[day]) byDay[day] = [];
-      byDay[day].push(p);
-    }
-
-    const days = Object.keys(byDay).sort();
-    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-    let html = `<table class="schedule-table" style="width:100%">
-      <thead><tr>
-        <th>Date</th>
-        <th>🔺 High</th>
-        <th style="color:var(--text-dim)">Time</th>
-        <th>🔻 Low</th>
-        <th style="color:var(--text-dim)">Time</th>
-        <th>🔺 High 2</th>
-        <th style="color:var(--text-dim)">Time</th>
-      </tr></thead><tbody>`;
-
-    for (const day of days) {
-      const d = new Date(day + 'T12:00:00');
-      const label = `${dayNames[d.getDay()]} ${monthNames[d.getMonth()]} ${d.getDate()}`;
-      const tides = byDay[day];
-      const highs = tides.filter(t => t.type === 'H');
-      const lows = tides.filter(t => t.type === 'L');
-
-      html += `<tr>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">${label}</td>
-        <td style="color:var(--accent)">${highs[0] ? parseFloat(highs[0].v).toFixed(2) + ' ft' : '—'}</td>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">${highs[0] ? formatTideTime(highs[0].t) : ''}</td>
-        <td style="color:#64b5f6">${lows[0] ? parseFloat(lows[0].v).toFixed(2) + ' ft' : '—'}</td>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">${lows[0] ? formatTideTime(lows[0].t) : ''}</td>
-        <td style="color:var(--accent)">${highs[1] ? parseFloat(highs[1].v).toFixed(2) + ' ft' : '—'}</td>
-        <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim)">${highs[1] ? formatTideTime(highs[1].t) : ''}</td>
-      </tr>`;
-    }
-
-    html += '</tbody></table>';
-    document.getElementById('tideTable').innerHTML = html;
-  }
-
-  // ---- INIT ----
-  loadState();
-  updateHoursDisplay();
-  renderDashboard();
-  document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
-  // Pre-populate model if not already set
-  if (!state.specs || !state.specs.model) {
-    if (!state.specs) state.specs = {};
-    state.specs.model = 'DF140BTLW';
-    saveState();
-  }
-
-  document.getElementById('hoursModal').addEventListener('click', function(e) {
-    if (e.target === this) closeHoursModal();
+// ---- SPECS ----
+function saveSpecs(){
+  state.specs={model:document.getElementById('specModel').value,serial:document.getElementById('specSerial').value,year:document.getElementById('specYear').value,shaft:document.getElementById('specShaft').value,prop:document.getElementById('specProp').value,dealer:document.getElementById('specDealer').value,purchaseDate:document.getElementById('specPurchaseDate').value,warranty:document.getElementById('specWarranty').value,notes:document.getElementById('specNotes').value};
+  saveState();
+  const s=document.getElementById('specsSaved'); s.style.display='inline'; setTimeout(()=>s.style.display='none',2000);
+}
+function loadSpecsForm(){
+  if(!state.specs) return;
+  const s=state.specs;
+  ['model','serial','year','shaft','prop','dealer','purchaseDate','warranty','notes'].forEach(k=>{
+    const el=document.getElementById('spec'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(el&&s[k]) el.value=s[k];
   });
+}
+
+// ---- WEATHER ----
+const WMO={0:'Clear',1:'Mostly Clear',2:'Partly Cloudy',3:'Overcast',45:'Foggy',48:'Icy Fog',51:'Light Drizzle',53:'Drizzle',55:'Heavy Drizzle',61:'Light Rain',63:'Rain',65:'Heavy Rain',71:'Light Snow',73:'Snow',75:'Heavy Snow',80:'Showers',81:'Showers',82:'Heavy Showers',95:'Thunderstorm',96:'Thunderstorm',99:'Thunderstorm'};
+const WMOI={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌦',63:'🌧',65:'🌧',71:'🌨',73:'❄️',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+const WDIR=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+function deg2compass(d){return WDIR[Math.round(d/22.5)%16];}
+
+async function loadWeather(){
+  const loadEl=document.getElementById('weatherLoading'), contentEl=document.getElementById('weatherContent'), locEl=document.getElementById('weatherLocation');
+  if(!navigator.geolocation){loadEl.textContent='Geolocation not supported';return;}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:lat,longitude:lon}=pos.coords;
+    locEl.textContent=`${lat.toFixed(2)}°N ${Math.abs(lon).toFixed(2)}°W`;
+    try {
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,relative_humidity_2m&hourly=temperature_2m,weather_code,wind_speed_10m,precipitation_probability&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=1&forecast_hours=24`;
+      const data=await(await fetch(url)).json();
+      const c=data.current;
+      loadEl.style.display='none'; contentEl.style.display='block';
+      const wind=Math.round(c.wind_speed_10m), gusts=Math.round(c.wind_gusts_10m);
+
+      // Weather alerts
+      const alerts=[];
+      if(gusts>=25) alerts.push({cls:'danger',msg:`⛔ Gusts ${gusts} mph — use caution`});
+      else if(gusts>=15) alerts.push({cls:'warn',msg:`⚠️ Gusts ${gusts} mph — conditions marginal`});
+      if(wind>=20) alerts.push({cls:'danger',msg:`⛔ Wind ${wind} mph — rough conditions likely`});
+      else if(wind>=12) alerts.push({cls:'warn',msg:`⚠️ Wind ${wind} mph — watch conditions`});
+      const wcode=c.weather_code;
+      if(wcode>=95) alerts.push({cls:'danger',msg:'⛔ Thunderstorm in area — stay off water'});
+      else if(wcode>=80||wcode===65) alerts.push({cls:'warn',msg:'🌧 Heavy rain — reduced visibility'});
+      if(!alerts.length) alerts.push({cls:'ok',msg:'✅ Conditions look good for boating'});
+      document.getElementById('weatherAlerts').innerHTML=alerts.map(a=>`<div class="weather-alert ${a.cls}">${a.msg}</div>`).join('');
+
+      document.getElementById('weatherStats').innerHTML=`
+        <div style="text-align:center;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:26px;">${WMOI[c.weather_code]||'🌡'}</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${Math.round(c.temperature_2m)}°F</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);">${WMO[c.weather_code]||''}</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:26px;">🌡</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text-bright);">${Math.round(c.apparent_temperature)}°F</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);">FEELS LIKE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border-radius:6px;border:1px solid ${wind>=20?'var(--warn)':wind>=12?'var(--accent2)':'var(--border)'};">
+          <div style="font-size:26px;">💨</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${wind>=20?'var(--warn)':wind>=12?'var(--accent2)':'var(--accent2)'};">${wind}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);">MPH ${deg2compass(c.wind_direction_10m)}</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border-radius:6px;border:1px solid ${gusts>=25?'var(--warn)':gusts>=15?'var(--accent2)':'var(--border)'};">
+          <div style="font-size:26px;">💥</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${gusts>=25?'var(--warn)':gusts>=15?'var(--accent2)':'var(--text-bright)'};">${gusts}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);">MPH GUSTS</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:26px;">💧</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent3);">${c.relative_humidity_2m}%</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);">HUMIDITY</div>
+        </div>`;
+      const nowH=new Date().getHours();
+      let hourlyHtml='';
+      for(let i=nowH;i<Math.min(nowH+12,data.hourly.time.length);i++){
+        const h=parseInt(data.hourly.time[i].split('T')[1]);
+        const ampm=h>=12?'PM':'AM', hr12=h%12||12;
+        const pop=data.hourly.precipitation_probability[i]??0;
+        hourlyHtml+=`<div style="text-align:center;padding:7px 9px;background:${i===nowH?'rgba(0,180,216,0.12)':'var(--bg)'};border:1px solid ${i===nowH?'var(--accent)':'var(--border)'};border-radius:6px;min-width:52px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:${i===nowH?'var(--accent)':'var(--text-dim)'};">${i===nowH?'NOW':hr12+ampm}</div>
+          <div style="font-size:16px;margin:3px 0">${WMOI[data.hourly.weather_code[i]]||'🌡'}</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--text-bright)">${Math.round(data.hourly.temperature_2m[i])}°</div>
+          ${pop>10?`<div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#64b5f6;">${pop}%</div>`:'<div style="height:12px"></div>'}
+        </div>`;
+      }
+      document.getElementById('weatherHourly').innerHTML=hourlyHtml;
+    } catch(err){ loadEl.style.display='block'; loadEl.textContent='Weather unavailable'; }
+  }, err=>{ loadEl.textContent=err.code===1?'Location denied — enable in browser settings':'Unable to get location'; });
+}
+
+// ---- TIDES ----
+const TIDE_STATION='8549424', TEMP_STATION='8539094';
+function formatTideTime(str){ const[,t]=str.split(' '); if(!t) return str; const[h,m]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`; }
+
+async function loadTides(){
+  loadWeather();
+  const now=new Date(), pad=n=>String(n).padStart(2,'0');
+  const today=`${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  const end7=new Date(now); end7.setDate(now.getDate()+6);
+  const end=`${end7.getFullYear()}${pad(end7.getMonth()+1)}${pad(end7.getDate())}`;
+  try {
+    const [hiloR,wlR,tempR]=await Promise.all([
+      fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=${today}&end_date=${end}&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=df140log&format=json`),
+      fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=${TIDE_STATION}&product=water_level&datum=MLLW&time_zone=lst_ldt&units=english&application=df140log&format=json`),
+      fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=${TEMP_STATION}&product=water_temperature&units=english&time_zone=lst_ldt&application=df140log&format=json`)
+    ]);
+    const [hilo,wl,temp]=await Promise.all([hiloR.json(),wlR.json(),tempR.json()]);
+    if(wl.data&&wl.data.length){
+      const lat=wl.data[wl.data.length-1], val=parseFloat(lat.v);
+      document.getElementById('tideCurrentHeight').textContent=val.toFixed(1);
+      if(wl.data.length>1){const prev=parseFloat(wl.data[wl.data.length-2].v); const tr=val>prev?'▲ Rising':val<prev?'▼ Falling':'→ Steady'; const el=document.getElementById('tideCurrentTrend'); el.textContent=tr+' · '+formatTideTime(lat.t); el.style.color=val>prev?'var(--green)':'var(--accent)';}
+    }
+    if(temp.data&&temp.data.length){document.getElementById('waterTempDisplay').textContent=parseFloat(temp.data[temp.data.length-1].v).toFixed(1)+'°';}
+    if(hilo.predictions){ renderNextTides(hilo.predictions,now); renderHiLoTable(hilo.predictions); }
+  } catch(e){ document.getElementById('tideCurrentTrend').textContent='Unable to load'; }
+}
+
+function renderNextTides(predictions,now){
+  const nowTime=now.getTime(); let nextH=null,nextL=null;
+  for(const p of predictions){ const d=new Date(p.t.replace(' ','T')); if(d.getTime()>nowTime){ if(!nextH&&p.type==='H') nextH=p; if(!nextL&&p.type==='L') nextL=p; if(nextH&&nextL) break; } }
+  if(nextH){document.getElementById('tideNextHigh').textContent=formatTideTime(nextH.t);document.getElementById('tideNextHighHeight').textContent=parseFloat(nextH.v).toFixed(2)+' ft';}
+  if(nextL){document.getElementById('tideNextLow').textContent=formatTideTime(nextL.t);document.getElementById('tideNextLowHeight').textContent=parseFloat(nextL.v).toFixed(2)+' ft';}
+}
+
+function renderHiLoTable(predictions){
+  const byDay={};
+  for(const p of predictions){ const day=p.t.split(' ')[0]; if(!byDay[day]) byDay[day]=[]; byDay[day].push(p); }
+  const days=Object.keys(byDay).sort();
+  const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const today=new Date().toISOString().split('T')[0];
+  let html='';
+  for(const day of days){
+    const d=new Date(day+'T12:00:00'); const isToday=day===today;
+    const tides=byDay[day].slice().sort((a,b)=>a.t.localeCompare(b.t));
+    html+=`<div style="margin-bottom:10px;border:1px solid ${isToday?'var(--accent)':'var(--border)'};border-radius:6px;overflow:hidden;">
+      <div style="background:${isToday?'rgba(0,180,216,0.12)':'var(--panel2)'};padding:6px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:${isToday?'var(--accent)':'var(--text-bright)'};">${isToday?'Today':DN[d.getDay()]}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">${MN[d.getMonth()]} ${d.getDate()}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(${tides.length},1fr);">
+        ${tides.map((t,i)=>{const isH=t.type==='H'; return `<div style="text-align:center;padding:9px 4px;${i<tides.length-1?'border-right:1px solid var(--border);':''}">
+          <div style="font-size:13px;">${isH?'🔺':'🔻'}</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${isH?'var(--accent)':'#64b5f6'};letter-spacing:1px;">${formatTideTime(t.t)}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:1px;">${parseFloat(t.v).toFixed(1)} ft</div>
+        </div>`;}).join('')}
+      </div>
+    </div>`;
+  }
+  document.getElementById('tideTable').innerHTML=html;
+}
+
+// ---- INIT ----
+loadState();
+loadTheme();
+updateHoursDisplay();
+document.getElementById('logDate').value=new Date().toISOString().split('T')[0];
+document.getElementById('fuelDate').value=new Date().toISOString().split('T')[0];
+document.getElementById('tripDate').value=new Date().toISOString().split('T')[0];
+if(!state.specs||!state.specs.model){ if(!state.specs) state.specs={}; state.specs.model='DF140BTLW'; saveState(); }
+switchTab('tides');
 </script>
 </body>
 </html>
